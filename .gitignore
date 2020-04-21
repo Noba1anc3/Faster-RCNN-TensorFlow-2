@@ -1,0 +1,5 @@
+.idea
+__pycache__
+dataset
+*.pyc
+weights/faster_rcnn.h5
