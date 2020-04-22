@@ -36,7 +36,7 @@ class FasterRCNN(tf.keras.Model, RPNTestMixin, BBoxTestMixin):
 
         # ROIs kept configuration
         self.PRN_PROPOSAL_COUNT = 2000
-        self.PRN_NMS_THRESHOLD = 0.7
+        self.RPN_NMS_THRESHOLD = 0.7
         
         # RCNN configuration
         # Bounding box refinement mean and standard deviation
@@ -54,7 +54,7 @@ class FasterRCNN(tf.keras.Model, RPNTestMixin, BBoxTestMixin):
         
         # Boxes kept configuration
         self.RCNN_MIN_CONFIDENCE = 0.7
-        self.RCNN_NME_THRESHOLD = 0.3
+        self.RCNN_NMS_THRESHOLD = 0.3
         self.RCNN_MAX_INSTANCES = 100
         
         # Target Generator for the second stage.
@@ -79,7 +79,7 @@ class FasterRCNN(tf.keras.Model, RPNTestMixin, BBoxTestMixin):
             anchor_ratios=self.ANCHOR_RATIOS,
             anchor_feature_strides=self.ANCHOR_FEATURE_STRIDES,
             proposal_count=self.PRN_PROPOSAL_COUNT,
-            nms_threshold=self.PRN_NMS_THRESHOLD,
+            nms_threshold=self.RPN_NMS_THRESHOLD,
             target_means=self.RPN_TARGET_MEANS,
             target_stds=self.RPN_TARGET_STDS,
             num_rpn_deltas=self.PRN_BATCH_SIZE,
@@ -98,7 +98,7 @@ class FasterRCNN(tf.keras.Model, RPNTestMixin, BBoxTestMixin):
             target_means=self.RCNN_TARGET_MEANS,
             target_stds=self.RCNN_TARGET_STDS,
             min_confidence=self.RCNN_MIN_CONFIDENCE,
-            nms_threshold=self.RCNN_NME_THRESHOLD,
+            nms_threshold=self.RCNN_NMS_THRESHOLD,
             max_instances=self.RCNN_MAX_INSTANCES,
             name='b_box_head')
 

@@ -22,14 +22,10 @@ img_mean = (123.675, 116.28, 103.53)
 img_std = (1., 1., 1.)
 batch_size = 1
 
-train_dataset = coco.CocoDataSet('dataset', 'train',
-                                 flip_ratio = 0.5,
-                                 pad_mode = 'fixed',
-                                 mean = img_mean,
-                                 std = img_std,
+train_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='train',
+                                 flip_ratio=0.5, pad_mode='fixed',
+                                 mean=img_mean, std=img_std,
                                  scale=(800, 1216))
-
-num_classes = len(train_dataset.get_categories())
 
 train_generator = data_generator.DataGenerator(train_dataset)
 train_tf_dataset = tf.data.Dataset.from_generator(
@@ -39,6 +35,8 @@ train_tf_dataset = train_tf_dataset.batch(batch_size).prefetch(100).shuffle(100)
 # train_tf_dataset = train_tf_dataset.padded_batch(
 #     batch_size, padded_shapes=([None, None, None], [None], [None, None], [None]))
 
+# 背景
+num_classes = len(train_dataset.get_categories())
 model = faster_rcnn.FasterRCNN(num_classes=num_classes)
 optimizer = keras.optimizers.SGD(1e-3, momentum=0.9, nesterov=True)
 

@@ -1,4 +1,3 @@
-import numpy as np
 
 from detection.datasets.utils import *
 
@@ -16,6 +15,7 @@ class ImageTransform(object):
                  mean=(0, 0, 0),
                  std=(1, 1, 1),
                  pad_mode='fixed'):
+
         self.scale = scale
         self.mean = mean
         self.std = std
@@ -30,10 +30,10 @@ class ImageTransform(object):
           
         if flip:
             img = img_flip(img)
+
         if self.pad_mode == 'fixed':
             img = impad_to_square(img, self.impad_size)
-
-        else: # 'non-fixed'
+        else:
             img = impad_to_multiple(img, self.impad_size)
         
         return img, img_shape, scale_factor
@@ -44,17 +44,18 @@ class BboxTransform(object):
         1. rescale bboxes according to image size
         2. flip bboxes (if needed)
     '''
+
     def __init__(self):
         pass
     
-    def __call__(self, bboxes, labels, 
-                 img_shape, scale_factor, flip=False):
+    def __call__(self, bboxes, img_shape, scale_factor, flip=False):
  
         bboxes = bboxes * scale_factor
+
         if flip:
             bboxes = bbox_flip(bboxes, img_shape)
             
         bboxes[:, 0::2] = np.clip(bboxes[:, 0::2], 0, img_shape[0])
         bboxes[:, 1::2] = np.clip(bboxes[:, 1::2], 0, img_shape[1])
             
-        return bboxes, labels
+        return bboxes

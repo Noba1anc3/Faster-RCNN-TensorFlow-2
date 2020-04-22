@@ -13,6 +13,7 @@ class CocoDataSet(object):
                  std=(1, 1, 1),
                  scale=(1024, 800),
                  debug=False):
+
         '''Load a subset of the COCO dataset.
         
         Attributes
@@ -68,9 +69,11 @@ class CocoDataSet(object):
 
         # Filter images without ground truths.
         all_img_ids = list(set([_['image_id'] for _ in self.coco.anns.values()]))
+
         # Filter images too small.
         img_ids = []
         img_infos = []
+
         for i in all_img_ids:
             info = self.coco.loadImgs(i)[0]
             
@@ -135,7 +138,6 @@ class CocoDataSet(object):
         ann = dict(
             bboxes=gt_bboxes, labels=gt_labels, bboxes_ignore=gt_bboxes_ignore)
 
-
         return ann
     
     def __len__(self):
@@ -150,9 +152,10 @@ class CocoDataSet(object):
             
         Returns
         ---
-            tuple: A tuple containing the following items: image, 
-                bboxes, labels.
+            tuple: A tuple containing the following items:
+            　　　　image, bboxes, labels.
         '''
+
         img_info = self.img_infos[idx]
         ann_info = self._load_ann_info(idx)
         
@@ -175,14 +178,13 @@ class CocoDataSet(object):
         pad_shape = img.shape
         
         # Handle the annotation.
-        bboxes, labels = self.bbox_transform(
-            bboxes, labels, img_shape, scale_factor, flip)
+        bboxes = self.bbox_transform(bboxes, img_shape, scale_factor, flip)
         
         # Handle the meta info.
         img_meta_dict = dict({
             'ori_shape': ori_shape,
-            'img_shape': img_shape,
-            'pad_shape': pad_shape,
+            'img_shape': img_shape,  # size after scale
+            'pad_shape': pad_shape,  # size after padding
             'scale_factor': scale_factor,
             'flip': flip
         })
@@ -200,5 +202,6 @@ class CocoDataSet(object):
             
         Note that the first item 'bg' means background.
         '''
+
         return ['bg'] + [self.coco.loadCats(i)[0]["name"] for i in self.cat2label.keys()]
 

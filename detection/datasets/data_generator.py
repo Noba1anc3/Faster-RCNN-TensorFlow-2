@@ -10,6 +10,7 @@ class DataGenerator:
     
     def __call__(self):
         indices = np.arange(len(self.dataset))
+
         if self.shuffle:
             np.random.shuffle(indices)
 

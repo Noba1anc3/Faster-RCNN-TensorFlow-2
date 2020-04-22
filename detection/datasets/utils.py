@@ -1,12 +1,12 @@
 import cv2
 import numpy as np
 
-###########################################
-#
-# Utility Functions for 
-# Image Preprocessing and Data Augmentation
-#
-###########################################
+#############################################
+#                                           #
+# Utility Functions for                     #
+# Image Preprocessing and Data Augmentation #
+#                                           #
+#############################################
 
 def img_flip(img):
     '''Flip the image horizontally
@@ -19,6 +19,7 @@ def img_flip(img):
     ---
         np.ndarray: the flipped image.
     '''
+
     return np.fliplr(img)
 
 def bbox_flip(bboxes, img_shape):
@@ -33,10 +34,13 @@ def bbox_flip(bboxes, img_shape):
     ---
         np.ndarray: the flipped bboxes.
     '''
+
     w = img_shape[1]
     flipped = bboxes.copy()
+
     flipped[..., 1] = w - bboxes[..., 3] - 1
     flipped[..., 3] = w - bboxes[..., 1] - 1
+
     return flipped
 
 def impad_to_square(img, pad_size):
@@ -52,10 +56,12 @@ def impad_to_square(img, pad_size):
         ndarray: The padded image with shape of 
             [pad_size, pad_size, channels].
     '''
+
     shape = (pad_size, pad_size, img.shape[-1])
-    
     pad = np.zeros(shape, dtype=img.dtype)
+
     pad[:img.shape[0], :img.shape[1], ...] = img
+
     return pad
 
 def impad_to_multiple(img, divisor):
@@ -70,12 +76,15 @@ def impad_to_multiple(img, divisor):
     ---
         ndarray: The padded image.
     '''
+
     pad_h = int(np.ceil(img.shape[0] / divisor)) * divisor
     pad_w = int(np.ceil(img.shape[1] / divisor)) * divisor
+
     shape = (pad_h, pad_w, img.shape[-1])
-    
     pad = np.zeros(shape, dtype=img.dtype)
+
     pad[:img.shape[0], :img.shape[1], ...] = img
+
     return pad
 
 def imrescale(img, scale):
@@ -90,13 +99,13 @@ def imrescale(img, scale):
     Returns
     ---
         np.ndarray: the scaled image.
-    ''' 
+    '''
+
     h, w = img.shape[:2]
     
     max_long_edge = max(scale)
     max_short_edge = min(scale)
-    scale_factor = min(max_long_edge / max(h, w),
-                       max_short_edge / min(h, w))
+    scale_factor = min(max_long_edge / max(h, w), max_short_edge / min(h, w))
     
     new_size = (int(w * float(scale_factor) + 0.5),
                 int(h * float(scale_factor) + 0.5))
@@ -119,7 +128,9 @@ def imnormalize(img, mean, std):
     ---
         np.ndarray: the normalized image.
     '''
-    img = (img - mean) / std    
+
+    img = (img - mean) / std
+
     return img.astype(np.float32)
 
 def imdenormalize(norm_img, mean, std):
@@ -135,18 +146,20 @@ def imdenormalize(norm_img, mean, std):
     ---
         np.ndarray: the denormalized image.
     '''
+
     img = norm_img * std + mean
+
     return img.astype(np.float32)
 
-#######################################
-#
-# Utility Functions for Data Formatting
-#
-#######################################
+#########################################
+#                                       #
+# Utility Functions for Data Formatting #
+#                                       #
+#########################################
 
 def get_original_image(img, img_meta, 
                        mean=(0, 0, 0), std=(1, 1, 1)):
-    '''Recover the origanal image.
+    '''Recover the original image.
     
     Args
     ---
@@ -160,6 +173,7 @@ def get_original_image(img, img_meta,
     ---
         np.ndarray: the original image.
     '''
+
     img_meta_dict = parse_image_meta(img_meta)
     ori_shape = img_meta_dict['ori_shape']
     img_shape = img_meta_dict['img_shape']
@@ -184,11 +198,13 @@ def compose_image_meta(img_meta_dict):
     ---
         img_meta: np.ndarray
     '''
+
     ori_shape = img_meta_dict['ori_shape']
     img_shape = img_meta_dict['img_shape']
     pad_shape = img_meta_dict['pad_shape']
     scale_factor = img_meta_dict['scale_factor']
     flip = 1 if img_meta_dict['flip'] else 0
+
     img_meta = np.array(
         ori_shape +               # size=3
         img_shape +               # size=3
