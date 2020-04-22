@@ -32,6 +32,7 @@ class PyramidROIAlign(tf.keras.layers.Layer):
                 The width and height are those specific in the pool_shape in the layer
                 constructor.
         """
+
         rois_list, feature_map_list, img_metas = inputs  # [2000 ,4], list:[P2, P3, P4, P5]
 
         pad_shapes = calc_pad_shapes(img_metas)
@@ -95,8 +96,9 @@ class PyramidROIAlign(tf.keras.layers.Layer):
             # which is how it's done in tf.crop_and_resize()
             # Result: [batch * num_rois, pool_height, pool_width, channels]
             pooled_rois.append(tf.image.crop_and_resize(
-                feature_map_list[i], level_rois, level_roi_indices, self.pool_shape,
-                method="bilinear"))  # [1, 304, 304, 256], [1999, 4], [1999], [2]=[7,7]=>[1999,7,7,256]
+                feature_map_list[i], level_rois, level_roi_indices,
+                self.pool_shape, method="bilinear"))
+            # [1, 304, 304, 256], [1999, 4], [1999], [2]=[7,7]=>[1999,7,7,256]
         # [1999, 7, 7, 256], [], [], [1,7,7,256] => [2000, 7, 7, 256]
         # Pack pooled features into one tensor
         pooled_rois = tf.concat(pooled_rois, axis=0)

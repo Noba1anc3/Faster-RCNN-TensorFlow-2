@@ -187,11 +187,15 @@ def get_original_image(img, img_meta, mean=(0, 0, 0), std=(1, 1, 1)):
     flip = img_meta_dict['flip']
 
     img = img[:img_shape[0], :img_shape[1]]
+
     if flip:
         img = img_flip(img)
+
     img = cv2.resize(img, (ori_shape[1], ori_shape[0]),
                      interpolation=cv2.INTER_LINEAR)
+
     img = imdenormalize(img, mean, std)
+
     return img
 
 
