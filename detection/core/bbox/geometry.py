@@ -1,9 +1,10 @@
 import tensorflow as tf
 
+
 def compute_overlaps(boxes1, boxes2):
-    '''Computes IoU overlaps between two sets of boxes.
+    """Computes IoU overlaps between two sets of boxes.
     boxes1, boxes2: [N, (y1, x1, y2, x2)].
-    '''
+    """
     # 1. Tile boxes2 and repeate boxes1. This allows us to compare
     # every boxes1 against every boxes2 without loops.
     # TF doesn't have an equivalent to np.repeate() so simulate it

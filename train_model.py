@@ -1,13 +1,14 @@
-import  os
-import  tensorflow as tf
-from    tensorflow import keras
-import  numpy as np
-from    matplotlib import pyplot as plt
-import  visualize
+import os
+import visualize
+import numpy as np
+import tensorflow as tf
 
-from    detection.datasets import coco, data_generator
-from    detection.datasets.utils import get_original_image
-from    detection.models.detectors import faster_rcnn
+from tensorflow import keras
+from matplotlib import pyplot as plt
+
+from detection.datasets import coco, data_generator
+from detection.datasets.utils import get_original_image
+from detection.models.detectors import faster_rcnn
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'

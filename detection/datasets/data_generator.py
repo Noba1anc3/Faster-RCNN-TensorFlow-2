@@ -1,7 +1,6 @@
 import numpy as np
 
 
-
 class DataGenerator:
 
     def __init__(self, dataset, shuffle=False):

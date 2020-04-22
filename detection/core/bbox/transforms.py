@@ -1,17 +1,17 @@
-import tensorflow as tf
 
 from detection.utils.misc import *
 
+
 def bbox2delta(box, gt_box, target_means, target_stds):
-    '''Compute refinement needed to transform box to gt_box.
-    
+    """Compute refinement needed to transform box to gt_box.
+
     Args
     ---
         box: [..., (y1, x1, y2, x2)]
         gt_box: [..., (y1, x1, y2, x2)]
         target_means: [4]
         target_stds: [4]
-    '''
+    """
     target_means = tf.constant(
         target_means, dtype=tf.float32)
     target_stds = tf.constant(
@@ -40,16 +40,17 @@ def bbox2delta(box, gt_box, target_means, target_stds):
     
     return delta
 
+
 def delta2bbox(box, delta, target_means, target_stds):
-    '''Compute bounding box based on roi and delta.
-    
+    """Compute bounding box based on roi and delta.
+
     Args
     ---
         box: [N, (y1, x1, y2, x2)] box to update
         delta: [N, (dy, dx, log(dh), log(dw))] refinements to apply
         target_means: [4]
         target_stds: [4]
-    '''
+    """
     target_means = tf.constant(
         target_means, dtype=tf.float32)
     target_stds = tf.constant(
@@ -75,13 +76,14 @@ def delta2bbox(box, delta, target_means, target_stds):
     result = tf.stack([y1, x1, y2, x2], axis=1)
     return result
 
+
 def bbox_clip(box, window):
-    '''
+    """
     Args
     ---
         box: [N, (y1, x1, y2, x2)]
         window: [4] in the form y1, x1, y2, x2
-    '''
+    """
     # Split
     wy1, wx1, wy2, wx2 = tf.split(window, 4)
     y1, x1, y2, x2 = tf.split(box, 4, axis=1)
@@ -94,15 +96,16 @@ def bbox_clip(box, window):
     clipped.set_shape((clipped.shape[0], 4))
     return clipped
 
+
 def bbox_flip(bboxes, width):
-    '''
+    """
     Flip bboxes horizontally.
-    
+
     Args
     ---
         bboxes: [..., 4]
         width: Int or Float
-    '''
+    """
     y1, x1, y2, x2 = tf.split(bboxes, 4, axis=-1)
     
     new_x1 = width - x2
@@ -113,14 +116,13 @@ def bbox_flip(bboxes, width):
     return flipped
 
 
-
 def bbox_mapping(box, img_meta):
-    '''
+    """
     Args
     ---
         box: [N, 4]
         img_meta: [11]
-    '''
+    """
     img_meta = parse_image_meta(img_meta)
     scale = img_meta['scale']
     flip = img_meta['flip']
@@ -131,13 +133,14 @@ def bbox_mapping(box, img_meta):
     
     return box
 
+
 def bbox_mapping_back(box, img_meta):
-    '''
+    """
     Args
     ---
         box: [N, 4]
         img_meta: [11]
-    '''
+    """
     img_meta = parse_image_meta(img_meta)
     scale = img_meta['scale']
     flip = img_meta['flip']
