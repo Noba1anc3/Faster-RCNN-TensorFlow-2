@@ -39,7 +39,7 @@ train_tf_dataset = train_tf_dataset.batch(batch_size).prefetch(100).shuffle(100)
 # 背景
 num_classes = len(train_dataset.get_categories())
 model = faster_rcnn.FasterRCNN(num_classes=num_classes)
-#optimizer = keras.optimizers.SGD(1e-3, momentum=0.9, nesterov=True)
+optimizer = keras.optimizers.SGD(1e-3, momentum=0.9, nesterov=True)
 
 img, img_meta, bboxes, labels = train_dataset[6]  # [N, 4], shape:[N]=data:[62]
 rgb_img = np.round(img + img_mean)
@@ -57,6 +57,7 @@ proposals = model.simple_test_rpn(img, img_meta)
 res = model.simple_test_bboxes(img, img_meta, proposals)
 visualize.display_instances(ori_img, res['rois'], res['class_ids'],
                             train_dataset.get_categories(), scores=res['scores'])
+print(1)
 plt.savefig('image_demo_random.png')
 #
 # model.load_weights('weights/faster_rcnn.h5', by_name=True)
