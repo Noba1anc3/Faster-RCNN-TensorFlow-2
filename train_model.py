@@ -35,28 +35,30 @@ train_tf_dataset = train_tf_dataset.batch(batch_size).prefetch(100).shuffle(100)
 
 # train_tf_dataset = train_tf_dataset.padded_batch(
 #     batch_size, padded_shapes=([None, None, None], [None], [None, None], [None]))
-
+print(1)
 num_classes = len(train_dataset.get_categories())
 model = faster_rcnn.FasterRCNN(num_classes=num_classes)
 optimizer = keras.optimizers.SGD(1e-3, momentum=0.9, nesterov=True)
-
+print(2)
 img, img_meta, bboxes, labels = train_dataset[6]
 rgb_img = np.round(img + img_mean)
 ori_img = get_original_image(img, img_meta, img_mean)
-
+print(3)
 visualize.display_instances(rgb_img, bboxes, labels, train_dataset.get_categories())
-
+print(4)
 batch_imgs = tf.convert_to_tensor(np.expand_dims(img, 0))  # [1, 1216, 1216, 3]
 batch_metas = tf.convert_to_tensor(np.expand_dims(img_meta, 0))  # [1, 11]
 
 # dummpy forward to build network variables
 _ = model((batch_imgs, batch_metas), training=False)
-
+print(5)
 proposals = model.simple_test_rpn(img, img_meta)
+print(6)
 res = model.simple_test_bboxes(img, img_meta, proposals)
+print(7)
 visualize.display_instances(ori_img, res['rois'], res['class_ids'],
                             train_dataset.get_categories(), scores=res['scores'])
-
+print(8)
 plt.savefig('image_demo_random.png')
 
 # model.load_weights('weights/faster_rcnn.h5', by_name=True)
