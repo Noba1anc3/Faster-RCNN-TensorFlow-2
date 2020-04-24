@@ -20,6 +20,7 @@ class FasterRCNN(tf.keras.Model, RPNTestMixin, BBoxTestMixin):
         self.NUM_CLASSES = num_classes
 
         # RPN configuration
+
         # Anchor attributes
         self.ANCHOR_SCALES = (32, 64, 128, 256, 512)
         self.ANCHOR_RATIOS = (0.5, 1, 2)
@@ -40,12 +41,13 @@ class FasterRCNN(tf.keras.Model, RPNTestMixin, BBoxTestMixin):
         self.RPN_NMS_THRESHOLD = 0.7
 
         # RCNN configuration
-        # Bounding box refinement mean and standard deviation
-        self.RCNN_TARGET_MEANS = (0., 0., 0., 0.)
-        self.RCNN_TARGET_STDS = (0.1, 0.1, 0.2, 0.2)
 
         # ROI Feat Size
         self.POOL_SIZE = (7, 7)
+
+        # Bounding box refinement mean and standard deviation
+        self.RCNN_TARGET_MEANS = (0., 0., 0., 0.)
+        self.RCNN_TARGET_STDS = (0.1, 0.1, 0.2, 0.2)
 
         # RCNN training configuration
         self.RCNN_BATCH_SIZE = 256

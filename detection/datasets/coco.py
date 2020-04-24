@@ -136,7 +136,10 @@ class CocoDataSet(object):
             gt_bboxes_ignore = np.zeros((0, 4), dtype=np.float32)
 
         ann = dict(
-            bboxes=gt_bboxes, labels=gt_labels, bboxes_ignore=gt_bboxes_ignore)
+            bboxes=gt_bboxes,
+            labels=gt_labels,
+            bboxes_ignore=gt_bboxes_ignore
+        )
 
         return ann
 
