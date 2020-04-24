@@ -50,7 +50,7 @@ batch_imgs = tf.convert_to_tensor(np.expand_dims(img, 0))  # [1, 1216, 1216, 3]
 batch_metas = tf.convert_to_tensor(np.expand_dims(img_meta, 0))  # [1, 11]
 
 # dummpy forward to build network variables
-_ = model((batch_imgs, batch_metas), training=False)
+# _ = model((batch_imgs, batch_metas), training=False)
 print(5)
 proposals = model.simple_test_rpn(img, img_meta)
 print(6)
