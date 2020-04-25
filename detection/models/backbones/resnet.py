@@ -96,20 +96,20 @@ class ResNet(tf.keras.Model):
         self.bn_conv1 = layers.BatchNormalization(name='bn_conv1')
         self.max_pool = layers.MaxPooling2D((3, 3), strides=(2, 2), padding='same')
 
-        self.res2a = _Bottleneck([64, 64, 256], block='2a',
+        self.res2a = _Bottleneck([64, 64, 256], block='2a',      # Conv block
                                  downsampling=True, stride=1)
-        self.res2b = _Bottleneck([64, 64, 256], block='2b')
+        self.res2b = _Bottleneck([64, 64, 256], block='2b')      # ID Block * 2
         self.res2c = _Bottleneck([64, 64, 256], block='2c')
 
-        self.res3a = _Bottleneck([128, 128, 512], block='3a',
+        self.res3a = _Bottleneck([128, 128, 512], block='3a',    # Conv block
                                  downsampling=True, stride=2)
-        self.res3b = _Bottleneck([128, 128, 512], block='3b')
+        self.res3b = _Bottleneck([128, 128, 512], block='3b')    # ID Block * 3
         self.res3c = _Bottleneck([128, 128, 512], block='3c')
         self.res3d = _Bottleneck([128, 128, 512], block='3d')
 
-        self.res4a = _Bottleneck([256, 256, 1024], block='4a',
+        self.res4a = _Bottleneck([256, 256, 1024], block='4a',   # Conv block
                                  downsampling=True, stride=2)
-        self.res4b = _Bottleneck([256, 256, 1024], block='4b')
+        self.res4b = _Bottleneck([256, 256, 1024], block='4b')   # ID Block * 5
         self.res4c = _Bottleneck([256, 256, 1024], block='4c')
         self.res4d = _Bottleneck([256, 256, 1024], block='4d')
         self.res4e = _Bottleneck([256, 256, 1024], block='4e')
@@ -133,9 +133,9 @@ class ResNet(tf.keras.Model):
             self.res4v = _Bottleneck([256, 256, 1024], block='4v')
             self.res4w = _Bottleneck([256, 256, 1024], block='4w')
 
-        self.res5a = _Bottleneck([512, 512, 2048], block='5a',
+        self.res5a = _Bottleneck([512, 512, 2048], block='5a',   # Conv block
                                  downsampling=True, stride=2)
-        self.res5b = _Bottleneck([512, 512, 2048], block='5b')
+        self.res5b = _Bottleneck([512, 512, 2048], block='5b')   # ID Block * 2
         self.res5c = _Bottleneck([512, 512, 2048], block='5c')
 
         self.out_channel = (256, 512, 1024, 2048)

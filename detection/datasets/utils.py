@@ -50,7 +50,7 @@ def impad_to_square(img, pad_size):
     """Pad an image to ensure each edge to equal to pad_size.
 
     Args
-    ---
+    ---detection/datasets/data_generator.py:12
         img: [height, width, channels]. Image to be padded
         pad_size: Int.
 

@@ -102,16 +102,16 @@ class RPNHead(tf.keras.Model):
 
         for feat in inputs:  # for every anchors feature maps
             """
-            (1, 304, 304, 256)
-            (1, 152, 152, 256)
-            (1, 76, 76, 256)
-            (1, 38, 38, 256)
-            (1, 19, 19, 256)
+            P2: (1, 304, 304, 256)
+            P3: (1, 152, 152, 256)
+            P4: (1, 76, 76, 256)
+            P5: (1, 38, 38, 256)
+            P6: (1, 19, 19, 256)
             
-            rpn_class_raw: (1, 304, 304, 6)
-            rpn_class_logits: (1, 277248, 2)
-            rpn_delta_pred: (1, 304, 304, 12)
-            rpn_deltas: (1, 277248, 4)
+            P2: rpn_class_raw: (1, 304, 304, 6)
+            P2: rpn_class_logits: (1, 277248, 2)
+            P2: rpn_delta_pred: (1, 304, 304, 12)
+            P2: rpn_deltas: (1, 277248, 4)
             
             rpn_class_raw: (1, 152, 152, 6)
             rpn_class_logits: (1, 69312, 2)
@@ -134,23 +134,17 @@ class RPNHead(tf.keras.Model):
             rpn_deltas: (1, 1083, 4)
             """
 
-            # print(feat.shape)
             shared = self.rpn_conv_shared(feat)
             shared = tf.nn.relu(shared)
 
             x = self.rpn_class_raw(shared)
-            # print('rpn_class_raw:', x.shape)
             rpn_class_logits = tf.reshape(x, [tf.shape(x)[0], -1, 2])
             rpn_probs = tf.nn.softmax(rpn_class_logits)
-            # print('rpn_class_logits:', rpn_class_logits.shape)
 
             x = self.rpn_delta_pred(shared)
-            # print('rpn_delta_pred:', x.shape)
             rpn_deltas = tf.reshape(x, [tf.shape(x)[0], -1, 4])
-            # print('rpn_deltas:', rpn_deltas.shape)
 
             layer_outputs.append([rpn_class_logits, rpn_probs, rpn_deltas])
-            # print(rpn_class_logits.shape, rpn_probs.shape, rpn_deltas.shape)
 
             """
             (1, 277248, 2) (1, 277248, 2) (1, 277248, 4)

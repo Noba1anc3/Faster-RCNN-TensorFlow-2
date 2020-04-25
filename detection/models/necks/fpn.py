@@ -6,6 +6,7 @@ FRN model for Keras.
     https://arxiv.org/abs/1612.03144)
 
 """
+
 import tensorflow as tf
 from tensorflow.keras import layers
 
