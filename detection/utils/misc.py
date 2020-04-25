@@ -54,6 +54,7 @@ def calc_batch_padded_shape(meta):
     ---
         nd.ndarray. Tuple of (height, width)
     """
+
     return tf.cast(tf.reduce_max(meta[:, 6:8], axis=0), tf.int32).numpy()
 
 

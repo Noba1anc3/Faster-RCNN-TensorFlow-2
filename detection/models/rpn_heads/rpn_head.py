@@ -154,11 +154,12 @@ class RPNHead(tf.keras.Model):
             (1, 1083, 2) (1, 1083, 2) (1, 1083, 4)
             """
 
-        outputs = list(zip(*layer_outputs))
-        outputs = [tf.concat(list(o), axis=1) for o in outputs]
-        rpn_class_logits, rpn_probs, rpn_deltas = outputs
+        outputs = list(zip(*layer_outputs))  # 5*3 -> 3*5
+
         # (1, 369303, 2) (1, 369303, 2) (1, 369303, 4)
-        # print(rpn_class_logits.shape, rpn_probs.shape, rpn_deltas.shape)
+        outputs = [tf.concat(list(o), axis=1) for o in outputs]
+
+        rpn_class_logits, rpn_probs, rpn_deltas = outputs
 
         return rpn_class_logits, rpn_probs, rpn_deltas
 
@@ -211,10 +212,12 @@ class RPNHead(tf.keras.Model):
         Note that num_proposals is no more than proposal_count. And different
            images in one batch may have different num_proposals.
         """
+
         anchors, valid_flags = self.generator.generate_pyramid_anchors(img_metas)
-        # [369303, 4], [b, 11]
+
         # [b, N, (background prob, foreground prob)], get anchor's foreground prob, [1, 369303]
         rpn_probs = rpn_probs[:, :, 1]
+
         # [[1216, 1216]]
         pad_shapes = calc_pad_shapes(img_metas)
 
@@ -256,15 +259,17 @@ class RPNHead(tf.keras.Model):
 
         # filter invalid anchors, int => bool
         valid_flags = tf.cast(valid_flags, tf.bool)
-        # [369303] => [215169], respectively
+
+        # [369303] => [228048], respectively
         rpn_probs = tf.boolean_mask(rpn_probs, valid_flags)
         rpn_deltas = tf.boolean_mask(rpn_deltas, valid_flags)
         anchors = tf.boolean_mask(anchors, valid_flags)
 
         # Improve performance
-        pre_nms_limit = min(6000, anchors.shape[0])  # min(6000, 215169) => 6000
+        pre_nms_limit = min(6000, anchors.shape[0])  # min(6000, 228048) => 6000
         ix = tf.nn.top_k(rpn_probs, pre_nms_limit, sorted=True).indices
-        # [215169] => [6000], respectively
+
+        # [228048] => [6000], respectively
         rpn_probs = tf.gather(rpn_probs, ix)
         rpn_deltas = tf.gather(rpn_deltas, ix)
         anchors = tf.gather(anchors, ix)
@@ -272,6 +277,7 @@ class RPNHead(tf.keras.Model):
         # Get refined anchors, => [6000, 4]
         proposals = transforms.delta2bbox(anchors, rpn_deltas,
                                           self.target_means, self.target_stds)
+
         # clipping to valid area, [6000, 4]
         window = tf.constant([0., 0., H, W], dtype=tf.float32)
         proposals = transforms.bbox_clip(proposals, window)
@@ -282,6 +288,7 @@ class RPNHead(tf.keras.Model):
         # NMS, indices: [2000]
         indices = tf.image.non_max_suppression(
             proposals, rpn_probs, self.proposal_count, self.nms_threshold)
+
         proposals = tf.gather(proposals, indices)  # [2000, 4]
 
         if with_probs:

@@ -51,11 +51,14 @@ def delta2bbox(box, delta, target_means, target_stds):
         target_means: [4]
         target_stds: [4]
     """
+
     target_means = tf.constant(
         target_means, dtype=tf.float32)
     target_stds = tf.constant(
         target_stds, dtype=tf.float32)
-    delta = delta * target_stds + target_means    
+
+    delta = delta * target_stds + target_means
+
     # Convert to y, x, h, w
     height = box[:, 2] - box[:, 0]
     width = box[:, 3] - box[:, 1]
@@ -73,7 +76,9 @@ def delta2bbox(box, delta, target_means, target_stds):
     x1 = center_x - 0.5 * width
     y2 = y1 + height
     x2 = x1 + width
+
     result = tf.stack([y1, x1, y2, x2], axis=1)
+
     return result
 
 
@@ -84,16 +89,20 @@ def bbox_clip(box, window):
         box: [N, (y1, x1, y2, x2)]
         window: [4] in the form y1, x1, y2, x2
     """
+
     # Split
     wy1, wx1, wy2, wx2 = tf.split(window, 4)
     y1, x1, y2, x2 = tf.split(box, 4, axis=1)
+
     # Clip
     y1 = tf.maximum(tf.minimum(y1, wy2), wy1)
     x1 = tf.maximum(tf.minimum(x1, wx2), wx1)
     y2 = tf.maximum(tf.minimum(y2, wy2), wy1)
     x2 = tf.maximum(tf.minimum(x2, wx2), wx1)
+
     clipped = tf.concat([y1, x1, y2, x2], axis=1)
     clipped.set_shape((clipped.shape[0], 4))
+
     return clipped
 
 

@@ -42,25 +42,29 @@ class AnchorGenerator:
             anchors: [num_anchors, (y1, x1, y2, x2)] in image coordinates.
             valid_flags: [batch_size, num_anchors]
         """
+
         # generate anchors
         pad_shape = calc_batch_padded_shape(img_metas)  # [1216, 1216]
+
         # <class 'list'>: [(304, 304), (152, 152), (76, 76), (38, 38), (19, 19)]
         feature_shapes = [(pad_shape[0] // stride, pad_shape[1] // stride)
                           for stride in self.feature_strides]
+
         anchors = [
             self._generate_level_anchors(level, feature_shape)
             for level, feature_shape in enumerate(feature_shapes)
         ]  # [277248, 4], [69312, 4], [17328, 4], [4332, 4], [1083, 4]
+
         anchors = tf.concat(anchors, axis=0)  # [369303, 4]
-        # print('total anchors:', anchors.shape)
-        # print('---------')
 
         # generate valid flags
         img_shapes = calc_img_shapes(img_metas)  # (800, 1067)
+
         valid_flags = [
             self._generate_valid_flags(anchors, img_shapes[i])
             for i in range(img_shapes.shape[0])
         ]
+
         valid_flags = tf.stack(valid_flags, axis=0)
 
         anchors = tf.stop_gradient(anchors)
@@ -79,11 +83,13 @@ class AnchorGenerator:
         ---
             valid_flags: [num_anchors]
         """
+
         y_center = (anchors[:, 2] + anchors[:, 0]) / 2  # [369300]
         x_center = (anchors[:, 3] + anchors[:, 1]) / 2
 
         valid_flags = tf.ones(anchors.shape[0], dtype=tf.int32)  # [369300]
         zeros = tf.zeros(anchors.shape[0], dtype=tf.int32)
+
         # set boxes whose center is out of image area as invalid.
         valid_flags = tf.where(y_center <= img_shape[0], valid_flags, zeros)
         valid_flags = tf.where(x_center <= img_shape[1], valid_flags, zeros)
@@ -95,41 +101,29 @@ class AnchorGenerator:
 
         scale: 32
         ratios: tf.Tensor([0.5 1.  2. ], shape=(3,), dtype=float32)
-        pos: (256, 256) (256, 256)
-        scale: 64
-        ratios: tf.Tensor([0.5 1.  2. ], shape=(3,), dtype=float32)
-        pos: (128, 128) (128, 128)
-        scale: 128
-        ratios: tf.Tensor([0.5 1.  2. ], shape=(3,), dtype=float32)
-        pos: (64, 64) (64, 64)
-        scale: 256
-        ratios: tf.Tensor([0.5 1.  2. ], shape=(3,), dtype=float32)
-        pos: (32, 32) (32, 32)
-        scale: 512
-        ratios: tf.Tensor([0.5 1.  2. ], shape=(3,), dtype=float32)
-        pos: (16, 16) (16, 16)
-
-
-        scale: 32
-        ratios: tf.Tensor([0.5 1.  2. ], shape=(3,), dtype=float32)
         pos: (304, 304) (304, 304)
         boxes: (277248, 4)
+
         scale: 64
         ratios: tf.Tensor([0.5 1.  2. ], shape=(3,), dtype=float32)
         pos: (152, 152) (152, 152)
         boxes: (69312, 4)
+
         scale: 128
         ratios: tf.Tensor([0.5 1.  2. ], shape=(3,), dtype=float32)
         pos: (76, 76) (76, 76)
         boxes: (17328, 4)
+
         scale: 256
         ratios: tf.Tensor([0.5 1.  2. ], shape=(3,), dtype=float32)
         pos: (38, 38) (38, 38)
         boxes: (4332, 4)
+
         scale: 512
         ratios: tf.Tensor([0.5 1.  2. ], shape=(3,), dtype=float32)
         pos: (19, 19) (19, 19)
         boxes: (1083, 4)
+
         total anchors: (369303, 4)
 
         ---
@@ -139,6 +133,7 @@ class AnchorGenerator:
         ---
             numpy.ndarray [anchors_num, (y1, x1, y2, x2)]
         """
+
         scale = self.scales[level]
         ratios = self.ratios
         feature_stride = self.feature_strides[level]
@@ -149,8 +144,8 @@ class AnchorGenerator:
         ratios = tf.reshape(ratios, [-1])  # [0.5, 1, 2]
 
         # Enumerate heights and widths from scales and ratios
-        heights = scales / tf.sqrt(ratios)  # [45, 32, 22], square root
-        widths = scales * tf.sqrt(ratios)  # [22, 32, 45]
+        heights = scales / tf.sqrt(ratios)  # [45, 32, 22]
+        widths  = scales * tf.sqrt(ratios)  # [22, 32, 45]
 
         # Enumerate shifts in feature space, [0, 4, ..., 1216-4]
         shifts_y = tf.multiply(tf.range(feature_shape[0]), feature_stride)
@@ -170,8 +165,5 @@ class AnchorGenerator:
         # Convert to corner coordinates (y1, x1, y2, x2) [304x304, 3, 4] => [277448, 4]
         boxes = tf.concat([box_centers - 0.5 * box_sizes,
                            box_centers + 0.5 * box_sizes], axis=1)
-        # print('scale:', scale)
-        # print('ratios:', ratios)
-        # print('pos:', shifts_x.shape, shifts_y.shape)
-        # print('boxes:', boxes.shape)
+
         return boxes

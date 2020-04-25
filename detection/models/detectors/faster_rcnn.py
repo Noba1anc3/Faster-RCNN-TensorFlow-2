@@ -123,8 +123,8 @@ class FasterRCNN(tf.keras.Model, RPNTestMixin, BBoxTestMixin):
         # [1, 304, 304, 256] <= [1, 152, 152, 256]<=[1,76,76,256]<=[1,38,38,256]=>[1,19,19,256]
         P2, P3, P4, P5, P6 = self.neck([C2, C3, C4, C5])
 
-        rpn_feature_maps = [P2, P3, P4, P5, P6]
         rcnn_feature_maps = [P2, P3, P4, P5]
+        rpn_feature_maps = [P2, P3, P4, P5, P6]
 
         # [1, 369303, 2] [1, 369303, 2], [1, 369303, 4], includes all anchors on pyramid level of features
         rpn_class_logits, rpn_probs, rpn_deltas = self.rpn_head(rpn_feature_maps)
