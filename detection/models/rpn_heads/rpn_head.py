@@ -176,7 +176,6 @@ class RPNHead(tf.keras.Model):
         # valid_flags indicates anchors located in padded area or not.
         anchors, valid_flags = self.generator.generate_pyramid_anchors(img_metas)
 
-        #
         rpn_target_matchs, rpn_target_deltas = self.anchor_target.build_targets(
             anchors, valid_flags, gt_boxes, gt_class_ids)
 

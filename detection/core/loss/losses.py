@@ -12,6 +12,7 @@ def smooth_l1_loss(y_true, y_pred):
     diff = tf.abs(y_true - y_pred)
     less_than_one = tf.cast(tf.less(diff, 1.0), tf.float32)
     loss = (less_than_one * 0.5 * diff ** 2) + (1 - less_than_one) * (diff - 0.5)
+
     return loss
 
 
@@ -27,22 +28,22 @@ def rpn_class_loss(target_matchs, rpn_class_logits):
 
     # Get anchor classes. Convert the -1/+1 match to 0/1 values.
     anchor_class = tf.cast(tf.equal(target_matchs, 1), tf.int32)
+
     # Positive and Negative anchors contribute to the loss,
     # but neutral anchors (match value = 0) don't.
     indices = tf.where(tf.not_equal(target_matchs, 0))
+
     # Pick rows that contribute to the loss and filter out the rest.
     rpn_class_logits = tf.gather_nd(rpn_class_logits, indices)
     anchor_class = tf.gather_nd(anchor_class, indices)
-    # Cross entropy loss
-    # loss = tf.losses.sparse_softmax_cross_entropy(labels=anchor_class,
-    #                                               logits=rpn_class_logits)
 
+    # Cross entropy loss
     num_classes = rpn_class_logits.shape[-1]
-    # print(rpn_class_logits.shape)
     loss = keras.losses.categorical_crossentropy(tf.one_hot(anchor_class, depth=num_classes),
                                                  rpn_class_logits, from_logits=True)
 
     loss = tf.reduce_mean(loss) if tf.size(loss) > 0 else tf.constant(0.0)
+
     return loss
 
 
@@ -102,11 +103,8 @@ def rcnn_class_loss(target_matchs_list, rcnn_class_logits_list):
     class_logits = tf.concat(rcnn_class_logits_list, 0)
     class_ids = tf.cast(class_ids, 'int64')
 
-    # loss = tf.losses.sparse_softmax_cross_entropy(labels=class_ids,
-    #                                               logits=class_logits)
-
     num_classes = class_logits.shape[-1]
-    # print(class_logits.shape)
+
     loss = keras.losses.categorical_crossentropy(tf.one_hot(class_ids, depth=num_classes),
                                                  class_logits, from_logits=True)
 

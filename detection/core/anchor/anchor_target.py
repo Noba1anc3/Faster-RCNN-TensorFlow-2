@@ -57,10 +57,11 @@ class AnchorTarget:
             rpn_target_deltas: [batch_size, num_rpn_deltas, (dy, dx, log(dh), log(dw))]
                 Anchor bbox deltas.
         """
+
         rpn_target_matchs = []
         rpn_target_deltas = []
         
-        num_imgs = gt_class_ids.shape[0]  # namely, batchsz , 1
+        num_imgs = gt_class_ids.shape[0]  # namely, batchsz, 1
         for i in range(num_imgs):
             target_match, target_delta = self._build_single_target(
                 anchors, valid_flags[i], gt_boxes[i], gt_class_ids[i])
@@ -90,11 +91,12 @@ class AnchorTarget:
             target_matchs: [num_anchors]
             target_deltas: [num_rpn_deltas, (dy, dx, log(dh), log(dw))]
         """
+
         gt_boxes, _ = trim_zeros(gt_boxes) # remove padded zero boxes, [new_N, 4]
         
-        target_matchs = tf.zeros(anchors.shape[0], dtype=tf.int32) # [326393]
+        target_matchs = tf.zeros(anchors.shape[0], dtype=tf.int32)  # [369303]
         
-        # Compute overlaps [num_anchors, num_gt_boxes] 326393 vs 10 => [326393, 10]
+        # Compute overlaps [num_anchors, num_gt_boxes] 369303 vs 10 => [369303, 10]
         overlaps = geometry.compute_overlaps(anchors, gt_boxes)
 
         # Match anchors to GT Boxes
@@ -110,8 +112,9 @@ class AnchorTarget:
         
         # 1. Set negative anchors first. They get overwritten below if a GT box is
         # matched to them. [N_anchors, N_gt_boxes]
-        anchor_iou_argmax = tf.argmax(overlaps, axis=1)  # [326396] get clost gt boxes for each anchors
+        anchor_iou_argmax = tf.argmax(overlaps, axis=1)  # [369303] get clost gt boxes for each anchors
         anchor_iou_max = tf.reduce_max(overlaps, axis=[1])  # [326396] get closet gt boxes's overlap scores
+
         # if an anchor box overlap all GT box with IoU < 0.3, marked as -1 background
         target_matchs = tf.where(anchor_iou_max < self.neg_iou_thr, 
                                  -tf.ones(anchors.shape[0], dtype=tf.int32), target_matchs)
@@ -119,31 +122,34 @@ class AnchorTarget:
         # filter invalid anchors
         target_matchs = tf.where(tf.equal(valid_flags, 1),
                                  target_matchs, tf.zeros(anchors.shape[0], dtype=tf.int32))
+
         # if an anchor overlap with any GT box with IoU > 0.7, marked as foreground
         # 2. Set anchors with high overlap as positive.
         target_matchs = tf.where(anchor_iou_max >= self.pos_iou_thr, 
                                  tf.ones(anchors.shape[0], dtype=tf.int32), target_matchs)
 
         # 3. Set an anchor for each GT box (regardless of IoU value).        
-        gt_iou_argmax = tf.argmax(overlaps, axis=0) # [N_gt_boxes]
+        gt_iou_argmax = tf.argmax(overlaps, axis=0)  # [N_gt_boxes]
         target_matchs = tf.compat.v1.scatter_update(tf.Variable(target_matchs), gt_iou_argmax, 1)
         # update corresponding value=>1 for GT boxes' closest boxes
         
         # Subsample to balance positive and negative anchors
         # Don't let positives be more than half the anchors
-        ids = tf.where(tf.equal(target_matchs, 1))  # [N_pos_anchors, 1], [15, 1]
-        ids = tf.squeeze(ids, 1) # [15]
-        extra = ids.shape.as_list()[0] - int(self.num_rpn_deltas * self.positive_fraction) # 256*0.5
+        ids = tf.where(tf.equal(target_matchs, 1))  # [N_pos_anchors, 1]
+        ids = tf.squeeze(ids, 1)
+
+        extra = ids.shape.as_list()[0] - int(self.num_rpn_deltas * self.positive_fraction)
         if extra > 0:  # extra means the redundant pos_anchors
             # Reset the extra random ones to neutral
             ids = tf.random.shuffle(ids)[:extra]
             target_matchs = tf.compat.v1.scatter_update(target_matchs, ids, 0)
+
         # Same for negative proposals
-        ids = tf.where(tf.equal(target_matchs, -1))  # [213748, 1]
+        ids = tf.where(tf.equal(target_matchs, -1))
         ids = tf.squeeze(ids, 1)
-        extra = ids.shape.as_list()[0] - (self.num_rpn_deltas -  # 213748 - (256 - num_of_pos_anchors:15)
+        extra = ids.shape.as_list()[0] - (self.num_rpn_deltas -
             tf.reduce_sum(tf.cast(tf.equal(target_matchs, 1), tf.int32)))
-        if extra > 0:  # 213507, so many negative anchors!
+        if extra > 0:  # so many negative anchors!
             # Rest the extra ones to neutral
             ids = tf.random.shuffle(ids)[:extra]
             target_matchs = tf.compat.v1.scatter_update(target_matchs, ids, 0)
@@ -156,10 +162,11 @@ class AnchorTarget:
         a = tf.gather_nd(anchors, ids)  # [369303, 4], [15] => [15, 4]
         anchor_idx = tf.gather_nd(anchor_iou_argmax, ids)  # closed gt boxes index for 369303 anchors
         gt = tf.gather(gt_boxes, anchor_idx)  # get closed gt boxes coordinates for ids=15
+
         # a: [15, 4], postive anchors, gt: [15, 4] closed gt boxes for each anchors=15
-        target_deltas = transforms.bbox2delta(
-            a, gt, self.target_means, self.target_stds)
-        # target_deltas: [15, (dy,dx,logw,logh)]?
+        target_deltas = transforms.bbox2delta(a, gt, self.target_means, self.target_stds)
+        # target_deltas: [15, (dy,dx,logw,logh)]
+
         padding = tf.maximum(self.num_rpn_deltas - tf.shape(target_deltas)[0], 0) # 256-15
         target_deltas = tf.pad(target_deltas, [(0, padding), (0, 0)])  # padding to [256,4], last padding 0
 
