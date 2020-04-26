@@ -12,6 +12,7 @@ def bbox2delta(box, gt_box, target_means, target_stds):
         target_means: [4]
         target_stds: [4]
     """
+
     target_means = tf.constant(
         target_means, dtype=tf.float32)
     target_stds = tf.constant(

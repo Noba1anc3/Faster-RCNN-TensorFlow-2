@@ -81,27 +81,33 @@ class ProposalTarget:
             target_matchs: [num_positive_rois]
             target_deltas: [num_positive_rois, (dy, dx, log(dh), log(dw))]
         """
+
         H, W = img_shape # 1216, 1216
 
-        gt_boxes, non_zeros = trim_zeros(gt_boxes)  # [7, 4], remove padded zero boxes
-        gt_class_ids = tf.boolean_mask(gt_class_ids, non_zeros)  # [7]
+        gt_boxes, non_zeros = trim_zeros(gt_boxes)  # remove padded zero boxes
+        gt_class_ids = tf.boolean_mask(gt_class_ids, non_zeros)
+
         # normalize (y1, x1, y2, x2) => 0~1
         gt_boxes = gt_boxes / tf.constant([H, W, H, W], dtype=tf.float32)
+
         # [2k, 4] with [7, 4] => [2k, 7] overlop scores
         overlaps = geometry.compute_overlaps(proposals, gt_boxes)
+
         anchor_iou_argmax = tf.argmax(overlaps, axis=1)  # [2000]get cloest gt boxed id for each anchor boxes
         roi_iou_max = tf.reduce_max(overlaps, axis=1)  # [2000]get clost gt boxes overlop score for each anchor boxes
+
         # roi_iou_max: [2000],
         positive_roi_bool = (roi_iou_max >= self.pos_iou_thr)  # [2000]
-        positive_indices = tf.where(positive_roi_bool)[:, 0]  # [48, 1] =>[48]
         # get all positive indices, namely get all pos_anchor indices
-        negative_indices = tf.where(roi_iou_max < self.neg_iou_thr)[:, 0]
+        positive_indices = tf.where(positive_roi_bool)[:, 0]
         # get all negative anchor indices
+        negative_indices = tf.where(roi_iou_max < self.neg_iou_thr)[:, 0]
+
         # Subsample ROIs. Aim for 33% positive
         # Positive ROIs
-        positive_count = int(self.num_rcnn_deltas * self.positive_fraction)  # 0.25?
+        positive_count = int(self.num_rcnn_deltas * self.positive_fraction)  # 0.25
         positive_indices = tf.random.shuffle(positive_indices)[:positive_count]  # [256*0.25]=64, at most get 64
-        positive_count = tf.shape(positive_indices)[0]  # 34
+        positive_count = tf.shape(positive_indices)[0]
 
         # Negative ROIs. Add enough to maintain positive:negative ratio.
         r = 1.0 / self.positive_fraction
@@ -114,12 +120,14 @@ class ProposalTarget:
         
         # Assign positive ROIs to GT boxes.
         positive_overlaps = tf.gather(overlaps, positive_indices)  # [34, 7]
-        roi_gt_box_assignment = tf.argmax(positive_overlaps, axis=1)  # [34]for each anchor, get its clost gt boxes
+        roi_gt_box_assignment = tf.argmax(positive_overlaps, axis=1)  # [34] for each anchor, get its clost gt boxes
         roi_gt_boxes = tf.gather(gt_boxes, roi_gt_box_assignment)  # [34, 4]
         target_matchs = tf.gather(gt_class_ids, roi_gt_box_assignment)  # [34]
+
         # target_matchs, target_deltas all get!!
         # proposal: [34, 4], target: [34, 4]
         target_deltas = transforms.bbox2delta(positive_rois, roi_gt_boxes, self.target_means, self.target_stds)
+
         # [34, 4] [102, 4]
         rois = tf.concat([positive_rois, negative_rois], axis=0)
         

@@ -36,19 +36,18 @@ class PyramidROIAlign(tf.keras.layers.Layer):
         rois_list, feature_map_list, img_metas = inputs  # [2000 ,4], list:[P2, P3, P4, P5]
 
         pad_shapes = calc_pad_shapes(img_metas)
-
         pad_areas = pad_shapes[:, 0] * pad_shapes[:, 1]  # 1216*1216
 
-        num_rois_list = [rois.shape.as_list()[0] for rois in rois_list]  # data:[2000]
+        num_rois_list = [rois.shape.as_list()[0] for rois in rois_list]
         roi_indices = tf.constant(
-            [i for i in range(len(rois_list)) for _ in range(rois_list[i].shape.as_list()[0])],
-            dtype=tf.int32
-        )  # [0.....], shape:[2000]
+            [i for i in range(len(rois_list))
+             for _ in range(rois_list[i].shape.as_list()[0])], dtype=tf.int32
+        )
 
-        areas = tf.constant(  # range(1)                               range(2000)
-            [pad_areas[i] for i in range(pad_areas.shape[0]) for _ in range(num_rois_list[i])],
-            dtype=tf.float32
-        )  # [1216*1216, 1216*1216,...], shape:[2000]
+        areas = tf.constant(  # range(1)      range(2000)
+            [pad_areas[i] for i in range(pad_areas.shape[0])
+             for _ in range(num_rois_list[i])], dtype=tf.float32
+        )  # [1216*1216, 1216*1216,...]
 
         rois = tf.concat(rois_list, axis=0)  # [2000, 4]
 
@@ -72,6 +71,7 @@ class PyramidROIAlign(tf.keras.layers.Layer):
         # Loop through levels and apply ROI pooling to each. P2 to P5.
         pooled_rois = []
         roi_to_level = []
+
         for i, level in enumerate(range(2, 6)):  # 2,3,4,5
             ix = tf.where(tf.equal(roi_level, level))  # [1999, 1], means 1999 of 2000 select P2
             level_rois = tf.gather_nd(rois, ix)  # boxes to crop, [1999, 4]
@@ -99,6 +99,7 @@ class PyramidROIAlign(tf.keras.layers.Layer):
                 feature_map_list[i], level_rois, level_roi_indices,
                 self.pool_shape, method="bilinear"))
             # [1, 304, 304, 256], [1999, 4], [1999], [2]=[7,7]=>[1999,7,7,256]
+
         # [1999, 7, 7, 256], [], [], [1,7,7,256] => [2000, 7, 7, 256]
         # Pack pooled features into one tensor
         pooled_rois = tf.concat(pooled_rois, axis=0)
@@ -114,10 +115,13 @@ class PyramidROIAlign(tf.keras.layers.Layer):
         # Sort roi_to_level by batch then roi indextf.Tensor([0 100001 200002 ... 199801997 199901998  20101999], shape=(2000,), dtype=int32)
         # TF doesn't have a way to sort by two columns, so merge them and sort.
         sorting_tensor = roi_to_level[:, 0] * 100000 + roi_to_level[:, 1]
+
         ix = tf.nn.top_k(sorting_tensor, k=tf.shape(  # k=2000
             roi_to_level)[0]).indices[::-1]  # reverse the order
         ix = tf.gather(roi_to_level[:, 1], ix)  # [2000]
+
         pooled_rois = tf.gather(pooled_rois, ix)  # [2000, 7, 7, 256]
         # 2000 of [7, 7, 256]
         pooled_rois_list = tf.split(pooled_rois, num_rois_list, axis=0)
+
         return pooled_rois_list

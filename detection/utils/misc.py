@@ -11,8 +11,10 @@ def trim_zeros(boxes, name=None):
         boxes: [N, 4] matrix of boxes.
         non_zeros: [N] a 1D boolean mask identifying the rows to keep
     """
+
     non_zeros = tf.cast(tf.reduce_sum(tf.abs(boxes), axis=1), tf.bool)
     boxes = tf.boolean_mask(boxes, non_zeros, name=name)
+
     return boxes, non_zeros
 
 

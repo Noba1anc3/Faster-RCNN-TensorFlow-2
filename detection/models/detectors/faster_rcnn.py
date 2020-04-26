@@ -141,8 +141,7 @@ class FasterRCNN(tf.keras.Model, RPNTestMixin, BBoxTestMixin):
             rois_list = proposals_list
 
         # rois_list only contains coordinates, rcnn_feature_maps save the 5 features data=>[192,7,7,256]
-        pooled_regions_list = self.roi_align(
-            (rois_list, rcnn_feature_maps, img_metas))
+        pooled_regions_list = self.roi_align((rois_list, rcnn_feature_maps, img_metas))
         # [192, 81], [192, 81], [192, 81, 4]
 
         rcnn_class_logits_list, rcnn_probs_list, rcnn_deltas_list = \
@@ -158,6 +157,7 @@ class FasterRCNN(tf.keras.Model, RPNTestMixin, BBoxTestMixin):
 
             return [rpn_class_loss, rpn_bbox_loss,
                     rcnn_class_loss, rcnn_bbox_loss]
+
         else:
             detections_list = self.bbox_head.get_bboxes(
                 rcnn_probs_list, rcnn_deltas_list, rois_list, img_metas)
