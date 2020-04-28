@@ -26,14 +26,17 @@ img_std = (1., 1., 1.)
 
 batch_size = 1
 flip_ratio = 0
+learning_rate = 1e-4
 
-opts, args = getopt.getopt(sys.argv[1:], "-b:-f:", )
+opts, args = getopt.getopt(sys.argv[1:], "-b:-f:-l:", )
 
 for opt, arg in opts:
     if opt == '-b':
         batch_size = int(arg)
     elif opt == '-f':
         flip_ratio = float(arg)
+    elif opt == '-l':
+        learning_rate = float(arg)
 
 train_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='train',
                                  flip_ratio=flip_ratio, pad_mode='fixed',
@@ -47,7 +50,7 @@ train_tf_dataset = train_tf_dataset.batch(batch_size).prefetch(100).shuffle(100)
 
 num_classes = len(train_dataset.get_categories())
 model = faster_rcnn.FasterRCNN(num_classes=num_classes)
-optimizer = keras.optimizers.SGD(1e-4, momentum=0.9, nesterov=True)
+optimizer = keras.optimizers.SGD(learning_rate, momentum=0.9, nesterov=True)
 
 # inference
 
@@ -89,7 +92,7 @@ for epoch in range(100):
         loss_history.append(loss_value.numpy())
 
         if batch % 10 == 0:
-            print('Epoch:', epoch, 'Batch:', batch, 'Loss:', np.mean(loss_history))
+            print('Epoch:', epoch + 1, 'Batch:', batch, 'Loss:', np.mean(loss_history))
 
             # img, img_meta = batch_imgs[0].numpy(), batch_metas[0].numpy()
             # ori_img = get_original_image(img, img_meta, img_mean)
