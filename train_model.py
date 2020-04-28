@@ -33,12 +33,9 @@ train_tf_dataset = tf.data.Dataset.from_generator(
     train_generator, (tf.float32, tf.float32, tf.float32, tf.int32))
 train_tf_dataset = train_tf_dataset.batch(batch_size).prefetch(100).shuffle(100)
 
-# train_tf_dataset = train_tf_dataset.padded_batch(
-#     batch_size, padded_shapes=([None, None, None], [None], [None, None], [None]))
-
 num_classes = len(train_dataset.get_categories())
 model = faster_rcnn.FasterRCNN(num_classes=num_classes)
-# optimizer = keras.optimizers.SGD(1e-3, momentum=0.9, nesterov=True)
+optimizer = keras.optimizers.SGD(1e-3, momentum=0.9, nesterov=True)
 
 # img, img_meta, bboxes, labels = train_dataset[6]
 # rgb_img = np.round(img + img_mean)
@@ -69,14 +66,14 @@ model = faster_rcnn.FasterRCNN(num_classes=num_classes)
 
 
 for epoch in range(100):
-
     loss_history = []
-    for (batch, inputs) in enumerate(train_tf_dataset):
 
+    for (batch, inputs) in enumerate(train_tf_dataset):
         batch_imgs, batch_metas, batch_bboxes, batch_labels = inputs
+
         with tf.GradientTape() as tape:
-            rpn_class_loss, rpn_bbox_loss, rcnn_class_loss, rcnn_bbox_loss = model(
-                (batch_imgs, batch_metas, batch_bboxes, batch_labels), training=True)
+            rpn_class_loss, rpn_bbox_loss, rcnn_class_loss, rcnn_bbox_loss = \
+                model((batch_imgs, batch_metas, batch_bboxes, batch_labels))
 
             loss_value = rpn_class_loss + rpn_bbox_loss + rcnn_class_loss + rcnn_bbox_loss
 
