@@ -3,7 +3,6 @@ import sys
 import getopt
 import numpy as np
 import tensorflow as tf
-
 from tensorflow import keras
 
 from detection.datasets import coco, data_generator
@@ -70,4 +69,4 @@ for epoch in range(100):
             print('Epoch:', epoch + 1, 'Batch:', batch, 'Loss:', np.mean(loss_history))
 
         if batch % 50 == 0:
-            model.save_weights('./model/')
+            model.save_weights('./model/' + str(epoch) + '_' + str(batch) + '.h5')
