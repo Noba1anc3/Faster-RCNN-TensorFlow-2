@@ -68,5 +68,4 @@ for epoch in range(100):
         if batch % 10 == 0:
             print('Epoch:', epoch + 1, 'Batch:', batch, 'Loss:', np.mean(loss_history))
 
-        if batch % 50 == 0:
-            model.save_weights('./model/' + str(epoch) + '_' + str(batch) + '.h5')
+    model.save_weights('./model/epoch_' + str(epoch+1) + '.h5')
