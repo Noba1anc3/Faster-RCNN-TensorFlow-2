@@ -1,15 +1,12 @@
 import os
 import sys
 import getopt
-import visualize
 import numpy as np
 import tensorflow as tf
 
 from tensorflow import keras
-from matplotlib import pyplot as plt
 
 from detection.datasets import coco, data_generator
-from detection.datasets.utils import get_original_image
 from detection.models.detectors import faster_rcnn
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
@@ -52,28 +49,6 @@ num_classes = len(train_dataset.get_categories())
 model = faster_rcnn.FasterRCNN(num_classes=num_classes)
 optimizer = keras.optimizers.SGD(learning_rate, momentum=0.9, nesterov=True)
 
-# inference
-
-# img, img_meta, bboxes, labels = train_dataset[6]
-# rgb_img = np.round(img + img_mean)
-# ori_img = get_original_image(img, img_meta, img_mean)
-#
-# visualize.display_instances(rgb_img, bboxes, labels, train_dataset.get_categories())
-#
-# batch_imgs = tf.convert_to_tensor(np.expand_dims(img, 0))  # [1, 1216, 1216, 3]
-# batch_metas = tf.convert_to_tensor(np.expand_dims(img_meta, 0))  # [1, 11]
-
-# dummpy forward to build network variables
-# _ = model((batch_imgs, batch_metas), training=False)
-# model.load_weights('weights/faster_rcnn.h5', by_name=True)
-
-# proposals = model.simple_test_rpn(img, img_meta)
-# res = model.simple_test_bboxes(img, img_meta, proposals)
-# visualize.display_instances(ori_img, res['rois'], res['class_ids'],
-#                             train_dataset.get_categories(), scores=res['scores'])
-#
-# plt.savefig('image_demo_ckpt.png')
-
 for epoch in range(100):
     loss_history = []
 
@@ -94,10 +69,5 @@ for epoch in range(100):
         if batch % 10 == 0:
             print('Epoch:', epoch + 1, 'Batch:', batch, 'Loss:', np.mean(loss_history))
 
-            # img, img_meta = batch_imgs[0].numpy(), batch_metas[0].numpy()
-            # ori_img = get_original_image(img, img_meta, img_mean)
-            # proposals = model.simple_test_rpn(img, img_meta)
-            # res = model.simple_test_bboxes(img, img_meta, proposals)
-            # visualize.display_instances(ori_img, res['rois'], res['class_ids'],
-            #                             train_dataset.get_categories(), scores=res['scores'])
-            # plt.savefig('images/%d-%d.png' % (epoch, batch))
+        if batch % 50 == 0:
+            model.save_weights('./model/')
