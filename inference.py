@@ -54,6 +54,7 @@ plt.savefig('img_demo.png')
 batch_imgs = tf.convert_to_tensor(np.expand_dims(img, 0))  # [1, 1216, 1216, 3]
 batch_metas = tf.convert_to_tensor(np.expand_dims(img_meta, 0))  # [1, 11]
 
+_ = model((batch_imgs, batch_metas), training=False)
 model.load_weights('model/epoch_10.h5', by_name=True)
 
 proposals = model.simple_test_rpn(img, img_meta)
