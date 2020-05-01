@@ -114,10 +114,10 @@ for epoch in range(epochs):
             dataset_results.append(results)
 
     if not dataset_results == []:
-        with open('detection_result.json', 'w') as f:
+        with open('result/epoch_' + str(epoch) + '.json', 'w') as f:
             f.write(json.dumps(dataset_results))
 
-        coco_dt = test_dataset.coco.loadRes('detection_result.json')
+        coco_dt = test_dataset.coco.loadRes('result/epoch_' + str(epoch) + '.json')
         cocoEval = COCOeval(test_dataset.coco, coco_dt, 'bbox')
         cocoEval.params.imgIds = imgIds
 
