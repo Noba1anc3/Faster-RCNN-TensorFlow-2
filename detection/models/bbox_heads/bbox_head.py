@@ -188,7 +188,7 @@ class BBoxHead(tf.keras.Model):
 
         nnms_keep = []
         for item in nms_keep:
-            nnms_keep.append(item.eval(session=tf.compat.v1.Session()))
+            nnms_keep.append(item.numpy())
 
         print(nnms_keep)
         nms_keep = tf.concat(nnms_keep, axis=0)
