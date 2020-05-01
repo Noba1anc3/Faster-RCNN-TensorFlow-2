@@ -49,6 +49,17 @@ train_tf_dataset = tf.data.Dataset.from_generator(
     train_generator, (tf.float32, tf.float32, tf.float32, tf.int32))
 train_tf_dataset = train_tf_dataset.batch(batch_size).prefetch(100).shuffle(100)
 
+test_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='test',
+                                 flip_ratio=flip_ratio, pad_mode='fixed',
+                                 mean=img_mean, std=img_std,
+                                 scale=(800, 1216))
+
+test_generator = data_generator.DataGenerator(test_dataset)
+test_tf_dataset = tf.data.Dataset.from_generator(
+    test_generator, (tf.float32, tf.float32, tf.float32, tf.int32))
+test_tf_dataset = test_tf_dataset.batch(batch_size).prefetch(100).shuffle(100)
+
+
 num_classes = len(train_dataset.get_categories())
 model = faster_rcnn.FasterRCNN(num_classes=num_classes)
 optimizer = keras.optimizers.SGD(learning_rate, momentum=0.9, nesterov=True)
@@ -78,25 +89,25 @@ for epoch in range(epochs):
     dataset_results = []
     imgIds = []
 
-    for idx in range(len(train_dataset)):
-        if idx % 10 == 9 or idx + 1 == len(train_dataset):
-            print(str(idx + 1) + ' / ' + str(len(train_dataset)))
+    for idx in range(len(test_dataset)):
+        if idx % 10 == 9 or idx + 1 == len(test_dataset):
+            print(str(idx + 1) + ' / ' + str(len(test_dataset)))
 
-        img, img_meta, _, _ = train_dataset[idx]
+        img, img_meta, _, _ = test_dataset[idx]
 
         proposals = model.simple_test_rpn(img, img_meta)
 
         res = model.simple_test_bboxes(img, img_meta, proposals)
         # visualize.display_instances(ori_img, res['rois'], res['class_ids'],
-        #                             train_dataset.get_categories(), scores=res['scores'])
+        #                             test_dataset.get_categories(), scores=res['scores'])
 
-        image_id = train_dataset.img_ids[idx]
+        image_id = test_dataset.img_ids[idx]
         imgIds.append(image_id)
 
         for pos in range(res['class_ids'].shape[0]):
             results = dict()
             results['score'] = float(res['scores'][pos])
-            results['category_id'] = train_dataset.label2cat[int(res['class_ids'][pos])]
+            results['category_id'] = test_dataset.label2cat[int(res['class_ids'][pos])]
             y1, x1, y2, x2 = [int(num) for num in list(res['rois'][pos])]
             results['bbox'] = [x1, y1, x2 - x1 + 1, y2 - y1 + 1]
             results['image_id'] = image_id
@@ -106,8 +117,8 @@ for epoch in range(epochs):
         with open('detection_result.json', 'w') as f:
             f.write(json.dumps(dataset_results))
 
-        coco_dt = train_dataset.coco.loadRes('detection_result.json')
-        cocoEval = COCOeval(train_dataset.coco, coco_dt, 'bbox')
+        coco_dt = test_dataset.coco.loadRes('detection_result.json')
+        cocoEval = COCOeval(test_dataset.coco, coco_dt, 'bbox')
         cocoEval.params.imgIds = imgIds
 
         cocoEval.evaluate()
