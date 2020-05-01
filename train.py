@@ -1,10 +1,12 @@
 import os
 import sys
+import json
 import getopt
 import numpy as np
 import tensorflow as tf
-from tensorflow import keras
 
+from tensorflow import keras
+from pycocotools.cocoeval import COCOeval
 from detection.datasets import coco, data_generator
 from detection.models.detectors import faster_rcnn
 
@@ -72,3 +74,49 @@ for epoch in range(epochs):
             print('Epoch:', epoch + 1, 'Batch:', batch, 'Loss:', np.mean(loss_history))
 
     model.save_weights('./model/epoch_' + str(epoch+1) + '.h5')
+
+    # img, img_meta, _, _ = train_dataset[0]
+    # batch_imgs = tf.convert_to_tensor(np.expand_dims(img, 0))  # [1, 1216, 1216, 3]
+    # batch_metas = tf.convert_to_tensor(np.expand_dims(img_meta, 0))  # [1, 11]
+    #
+    # _ = model((batch_imgs, batch_metas), training=False)
+    # model.load_weights('model/epoch_10.h5', by_name=True)
+
+    dataset_results = []
+    imgIds = []
+
+    for idx in range(len(train_dataset)):
+        if idx % 10 == 9 or idx + 1 == len(train_dataset):
+            print(str(idx + 1) + ' / ' + str(len(train_dataset)))
+
+        img, img_meta, _, _ = train_dataset[idx]
+
+        proposals = model.simple_test_rpn(img, img_meta)
+
+        res = model.simple_test_bboxes(img, img_meta, proposals)
+        # visualize.display_instances(ori_img, res['rois'], res['class_ids'],
+        #                             train_dataset.get_categories(), scores=res['scores'])
+
+        image_id = train_dataset.img_ids[idx]
+        imgIds.append(image_id)
+
+        for pos in range(res['class_ids'].shape[0]):
+            results = dict()
+            results['score'] = float(res['scores'][pos])
+            results['category_id'] = train_dataset.label2cat[int(res['class_ids'][pos])]
+            y1, x1, y2, x2 = [float(num) for num in list(res['rois'][pos])]
+            results['bbox'] = [x1, y1, x2 - x1 + 1, y2 - y1 + 1]
+            results['image_id'] = image_id
+            dataset_results.append(results)
+
+    if not dataset_results == []:
+        with open('detection_result.json', 'w') as f:
+            f.write(json.dumps(dataset_results))
+
+        coco_dt = train_dataset.coco.loadRes('detection_result.json')
+        cocoEval = COCOeval(train_dataset.coco, coco_dt, 'bbox')
+        cocoEval.params.imgIds = imgIds
+
+        cocoEval.evaluate()
+        cocoEval.accumulate()
+        cocoEval.summarize()
