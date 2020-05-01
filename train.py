@@ -82,41 +82,41 @@ for epoch in range(epochs):
     # _ = model((batch_imgs, batch_metas), training=False)
     # model.load_weights('model/epoch_10.h5', by_name=True)
 
-    dataset_results = []
-    imgIds = []
-
-    for idx in range(len(train_dataset)):
-        if idx % 10 == 9 or idx + 1 == len(train_dataset):
-            print(str(idx + 1) + ' / ' + str(len(train_dataset)))
-
-        img, img_meta, _, _ = train_dataset[idx]
-
-        proposals = model.simple_test_rpn(img, img_meta)
-
-        res = model.simple_test_bboxes(img, img_meta, proposals)
-        # visualize.display_instances(ori_img, res['rois'], res['class_ids'],
-        #                             train_dataset.get_categories(), scores=res['scores'])
-
-        image_id = train_dataset.img_ids[idx]
-        imgIds.append(image_id)
-
-        for pos in range(res['class_ids'].shape[0]):
-            results = dict()
-            results['score'] = float(res['scores'][pos])
-            results['category_id'] = train_dataset.label2cat[int(res['class_ids'][pos])]
-            y1, x1, y2, x2 = [float(num) for num in list(res['rois'][pos])]
-            results['bbox'] = [x1, y1, x2 - x1 + 1, y2 - y1 + 1]
-            results['image_id'] = image_id
-            dataset_results.append(results)
-
-    if not dataset_results == []:
-        with open('detection_result.json', 'w') as f:
-            f.write(json.dumps(dataset_results))
-
-        coco_dt = train_dataset.coco.loadRes('detection_result.json')
-        cocoEval = COCOeval(train_dataset.coco, coco_dt, 'bbox')
-        cocoEval.params.imgIds = imgIds
-
-        cocoEval.evaluate()
-        cocoEval.accumulate()
-        cocoEval.summarize()
+    # dataset_results = []
+    # imgIds = []
+    #
+    # for idx in range(len(train_dataset)):
+    #     if idx % 10 == 9 or idx + 1 == len(train_dataset):
+    #         print(str(idx + 1) + ' / ' + str(len(train_dataset)))
+    #
+    #     img, img_meta, _, _ = train_dataset[idx]
+    #
+    #     proposals = model.simple_test_rpn(img, img_meta)
+    #
+    #     res = model.simple_test_bboxes(img, img_meta, proposals)
+    #     # visualize.display_instances(ori_img, res['rois'], res['class_ids'],
+    #     #                             train_dataset.get_categories(), scores=res['scores'])
+    #
+    #     image_id = train_dataset.img_ids[idx]
+    #     imgIds.append(image_id)
+    #
+    #     for pos in range(res['class_ids'].shape[0]):
+    #         results = dict()
+    #         results['score'] = float(res['scores'][pos])
+    #         results['category_id'] = train_dataset.label2cat[int(res['class_ids'][pos])]
+    #         y1, x1, y2, x2 = [float(num) for num in list(res['rois'][pos])]
+    #         results['bbox'] = [x1, y1, x2 - x1 + 1, y2 - y1 + 1]
+    #         results['image_id'] = image_id
+    #         dataset_results.append(results)
+    #
+    # if not dataset_results == []:
+    #     with open('detection_result.json', 'w') as f:
+    #         f.write(json.dumps(dataset_results))
+    #
+    #     coco_dt = train_dataset.coco.loadRes('detection_result.json')
+    #     cocoEval = COCOeval(train_dataset.coco, coco_dt, 'bbox')
+    #     cocoEval.params.imgIds = imgIds
+    #
+    #     cocoEval.evaluate()
+    #     cocoEval.accumulate()
+    #     cocoEval.summarize()
