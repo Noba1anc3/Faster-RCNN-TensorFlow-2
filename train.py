@@ -102,7 +102,7 @@ for epoch in range(epochs):
 #             results['image_id'] = image_id
 #             dataset_results.append(results)
 
-    if not dataset_results == []:
+    if dataset_results == []:
         with open('detection_result.json', 'w') as f:
             f.write(json.dumps(dataset_results))
 
