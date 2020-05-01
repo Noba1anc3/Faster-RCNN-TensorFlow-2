@@ -22,9 +22,13 @@ Faster R-CNN Resnet-101-FPN model was implemented with tensorflow 2.0.
 -l learning_rate (default = 1e-4)
 ```
 
+```
+-e epochs (default = 100)
+```
+
 ## Command
 ``` python
-python train_model.py -b batch_size -f flip_ratio -l learning_rate
+python train.py -b batch_size -f flip_ratio -l learning_rate -e epochs
 ```
 
 # Acknowledgement
