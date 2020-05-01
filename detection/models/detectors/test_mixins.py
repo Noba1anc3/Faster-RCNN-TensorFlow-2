@@ -75,5 +75,6 @@ class BBoxTestMixin(object):
         
         detections_list = self.bbox_head.get_bboxes(
             rcnn_probs_list, rcnn_deltas_list, rois_list, img_metas)
-        
+
+        print(detections_list)
         return self._unmold_detections(detections_list, img_metas)[0]

@@ -52,7 +52,7 @@ for idx in range(len(train_dataset)):
     img, img_meta, _, _ = train_dataset[idx]
 
     proposals = model.simple_test_rpn(img, img_meta)
-    print(proposals)
+
     res = model.simple_test_bboxes(img, img_meta, proposals)
     # visualize.display_instances(ori_img, res['rois'], res['class_ids'],
     #                             train_dataset.get_categories(), scores=res['scores'])
