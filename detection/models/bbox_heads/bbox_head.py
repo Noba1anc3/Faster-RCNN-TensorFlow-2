@@ -194,6 +194,8 @@ class BBoxHead(tf.keras.Model):
         else:
             nms_keep = tf.zeros([0, ], tf.int64)
 
+        print(nms_keep)
+
         # 3. Compute intersection between keep and nms_keep
         keep = tf.compat.v2.sets.intersection(tf.expand_dims(keep, 0),
                                               tf.expand_dims(nms_keep, 0))

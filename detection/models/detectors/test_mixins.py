@@ -73,10 +73,6 @@ class BBoxTestMixin(object):
         rcnn_class_logits_list, rcnn_probs_list, rcnn_deltas_list = \
             self.bbox_head(pooled_regions_list, training=False)
 
-        print(rcnn_class_logits_list)
-        print(rcnn_probs_list)
-        print(rcnn_deltas_list)
-
         detections_list = self.bbox_head.get_bboxes(
             rcnn_probs_list, rcnn_deltas_list, rois_list, img_metas)
 
