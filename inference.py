@@ -47,15 +47,14 @@ model = faster_rcnn.FasterRCNN(num_classes=num_classes)
 img, img_meta, bboxes, labels = train_dataset[6]
 rgb_img = np.round(img + img_mean)
 ori_img = get_original_image(img, img_meta, img_mean)
-
 visualize.display_instances(rgb_img, bboxes, labels, train_dataset.get_categories())
+
+plt.savefig('img_demo.png')
 
 batch_imgs = tf.convert_to_tensor(np.expand_dims(img, 0))  # [1, 1216, 1216, 3]
 batch_metas = tf.convert_to_tensor(np.expand_dims(img_meta, 0))  # [1, 11]
 
-# dummpy forward to build network variables
-# _ = model((batch_imgs, batch_metas), training=False)
-# model.load_weights('weights/faster_rcnn.h5', by_name=True)
+model.load_weights('model/epoch_10.h5', by_name=True)
 
 proposals = model.simple_test_rpn(img, img_meta)
 res = model.simple_test_bboxes(img, img_meta, proposals)
