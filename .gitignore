@@ -3,4 +3,4 @@ __pycache__
 dataset
 model
 *.pyc
-weights/faster_rcnn.h5
+img_demo.png

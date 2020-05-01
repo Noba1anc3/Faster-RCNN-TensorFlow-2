@@ -20,6 +20,7 @@ img_mean = (123.675, 116.28, 103.53)
 # img_std = (58.395, 57.12, 57.375)
 img_std = (1., 1., 1.)
 
+epochs = 100
 batch_size = 1
 flip_ratio = 0
 learning_rate = 1e-4
@@ -33,6 +34,8 @@ for opt, arg in opts:
         flip_ratio = float(arg)
     elif opt == '-l':
         learning_rate = float(arg)
+    elif opt == '-e':
+        epochs = int(arg)
 
 train_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='train',
                                  flip_ratio=flip_ratio, pad_mode='fixed',
@@ -48,7 +51,7 @@ num_classes = len(train_dataset.get_categories())
 model = faster_rcnn.FasterRCNN(num_classes=num_classes)
 optimizer = keras.optimizers.SGD(learning_rate, momentum=0.9, nesterov=True)
 
-for epoch in range(100):
+for epoch in range(epochs):
     loss_history = []
 
     for (batch, inputs) in enumerate(train_tf_dataset):

@@ -1,18 +1,12 @@
-import os
-import sys
+
 import random
-import itertools
 import colorsys
 
 import numpy as np
-from skimage.measure import find_contours
 
 import matplotlib.pyplot as plt
 from matplotlib import patches, lines
-from matplotlib.patches import Polygon
 
-
-# import IPython.display
 
 def random_colors(N, bright=True):
     """
@@ -81,7 +75,7 @@ def display_instances(image, boxes, class_ids, class_names,
 
         caption = "{} {:.3f}".format(label, score) if score else label
         ax.text(x1, y1 + 8, caption,
-                color='w', size=11, backgroundcolor="none")
+                color='b', size=11, backgroundcolor="none")
 
     plt.imshow(image.astype(np.uint8))
 
