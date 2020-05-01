@@ -46,8 +46,8 @@ dataset_results = []
 imgIds = []
 
 for idx in range(len(train_dataset)):
-    if idx % 10 == 0:
-        print(idx)
+    if idx % 10 == 9 or idx + 1 == len(train_dataset):
+        print(str(idx+1) + ' / ' + str(len(train_dataset)))
 
     img, img_meta, _, _ = train_dataset[idx]
 
@@ -58,7 +58,7 @@ for idx in range(len(train_dataset)):
 
     image_id = train_dataset.img_ids[idx]
     imgIds.append(image_id)
-
+    print(res)
     for pos in range(res['class_ids'].shape[0]):
         results = dict()
         results['score'] = float(res['scores'][pos])
