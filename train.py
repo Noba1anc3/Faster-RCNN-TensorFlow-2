@@ -56,53 +56,53 @@ optimizer = keras.optimizers.SGD(learning_rate, momentum=0.9, nesterov=True)
 for epoch in range(epochs):
     loss_history = []
 
-#     for (batch, inputs) in enumerate(train_tf_dataset):
-#         batch_imgs, batch_metas, batch_bboxes, batch_labels = inputs
+    for (batch, inputs) in enumerate(train_tf_dataset):
+        batch_imgs, batch_metas, batch_bboxes, batch_labels = inputs
 
-#         with tf.GradientTape() as tape:
-#             rpn_class_loss, rpn_bbox_loss, rcnn_class_loss, rcnn_bbox_loss = \
-#                 model((batch_imgs, batch_metas, batch_bboxes, batch_labels))
+        with tf.GradientTape() as tape:
+            rpn_class_loss, rpn_bbox_loss, rcnn_class_loss, rcnn_bbox_loss = \
+                model((batch_imgs, batch_metas, batch_bboxes, batch_labels))
 
-#             loss_value = rpn_class_loss + rpn_bbox_loss + rcnn_class_loss + rcnn_bbox_loss
+            loss_value = rpn_class_loss + rpn_bbox_loss + rcnn_class_loss + rcnn_bbox_loss
 
-#         grads = tape.gradient(loss_value, model.trainable_variables)
-#         optimizer.apply_gradients(zip(grads, model.trainable_variables))
+        grads = tape.gradient(loss_value, model.trainable_variables)
+        optimizer.apply_gradients(zip(grads, model.trainable_variables))
 
-#         loss_history.append(loss_value.numpy())
+        loss_history.append(loss_value.numpy())
 
-#         if batch % 10 == 0:
-#             print('Epoch:', epoch + 1, 'Batch:', batch, 'Loss:', np.mean(loss_history))
+        if batch % 10 == 0:
+            print('Epoch:', epoch + 1, 'Batch:', batch, 'Loss:', np.mean(loss_history))
 
-#     model.save_weights('./model/epoch_' + str(epoch+1) + '.h5')
+    model.save_weights('./model/epoch_' + str(epoch+1) + '.h5')
 
     dataset_results = []
     imgIds = []
 
-#     for idx in range(len(train_dataset)):
-#         if idx % 10 == 9 or idx + 1 == len(train_dataset):
-#             print(str(idx + 1) + ' / ' + str(len(train_dataset)))
+    for idx in range(len(train_dataset)):
+        if idx % 10 == 9 or idx + 1 == len(train_dataset):
+            print(str(idx + 1) + ' / ' + str(len(train_dataset)))
 
-#         img, img_meta, _, _ = train_dataset[idx]
+        img, img_meta, _, _ = train_dataset[idx]
 
-#         proposals = model.simple_test_rpn(img, img_meta)
+        proposals = model.simple_test_rpn(img, img_meta)
 
-#         res = model.simple_test_bboxes(img, img_meta, proposals)
-#         # visualize.display_instances(ori_img, res['rois'], res['class_ids'],
-#         #                             train_dataset.get_categories(), scores=res['scores'])
+        res = model.simple_test_bboxes(img, img_meta, proposals)
+        # visualize.display_instances(ori_img, res['rois'], res['class_ids'],
+        #                             train_dataset.get_categories(), scores=res['scores'])
 
-#         image_id = train_dataset.img_ids[idx]
-#         imgIds.append(image_id)
+        image_id = train_dataset.img_ids[idx]
+        imgIds.append(image_id)
 
-#         for pos in range(res['class_ids'].shape[0]):
-#             results = dict()
-#             results['score'] = float(res['scores'][pos])
-#             results['category_id'] = train_dataset.label2cat[int(res['class_ids'][pos])]
-#             y1, x1, y2, x2 = [float(num) for num in list(res['rois'][pos])]
-#             results['bbox'] = [x1, y1, x2 - x1 + 1, y2 - y1 + 1]
-#             results['image_id'] = image_id
-#             dataset_results.append(results)
+        for pos in range(res['class_ids'].shape[0]):
+            results = dict()
+            results['score'] = float(res['scores'][pos])
+            results['category_id'] = train_dataset.label2cat[int(res['class_ids'][pos])]
+            y1, x1, y2, x2 = [int(num) for num in list(res['rois'][pos])]
+            results['bbox'] = [x1, y1, x2 - x1 + 1, y2 - y1 + 1]
+            results['image_id'] = image_id
+            dataset_results.append(results)
 
-    if dataset_results == []:
+    if not dataset_results == []:
         with open('detection_result.json', 'w') as f:
             f.write(json.dumps(dataset_results))
 
