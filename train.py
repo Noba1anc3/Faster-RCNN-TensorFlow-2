@@ -53,7 +53,7 @@ train_tf_dataset = tf.data.Dataset.from_generator(
 train_tf_dataset = train_tf_dataset.batch(batch_size).prefetch(100).shuffle(100)
 
 test_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='train',
-                                 flip_ratio=flip_ratio, pad_mode='fixed',
+                                 flip_ratio=flip_ratio, pad_mode='non-fixed',
                                  mean=img_mean, std=img_std,
                                  scale=(800, 1216))
 
