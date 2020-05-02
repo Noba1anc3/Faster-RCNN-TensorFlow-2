@@ -52,7 +52,7 @@ train_tf_dataset = tf.data.Dataset.from_generator(
     train_generator, (tf.float32, tf.float32, tf.float32, tf.int32))
 train_tf_dataset = train_tf_dataset.batch(batch_size).prefetch(100).shuffle(100)
 
-test_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='train',
+test_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='val',
                                  flip_ratio=flip_ratio, pad_mode='non-fixed',
                                  mean=img_mean, std=img_std,
                                  scale=(800, 1216))
@@ -109,7 +109,6 @@ for epoch in range(1, epochs, 1):
         image_id = test_dataset.img_ids[idx]
         imgIds.append(image_id)
 
-        print(res)
         for pos in range(res['class_ids'].shape[0]):
             results = dict()
             results['score'] = float(res['scores'][pos])
