@@ -25,8 +25,8 @@ img_std = (1., 1., 1.)
 epochs = 100
 batch_size = 1
 flip_ratio = 0
-learning_rate = 1e-4
-checkpoint = 1
+learning_rate = 5e-4
+checkpoint = 1000
 
 opts, args = getopt.getopt(sys.argv[1:], "-b:-f:-l:-e:-c:", )
 
@@ -87,45 +87,46 @@ for epoch in range(1, epochs, 1):
 
         if batch % 10 == 0:
             print('Epoch:', epoch, 'Batch:', batch, 'Loss:', np.mean(loss_history))
+        
+        if batch % 500 == 0:
+            dataset_results = []
+            imgIds = []
 
-    if epoch % checkpoint == 0:
-        model.save_weights('./model/epoch_' + str(epoch) + '.h5')
+            for idx in range(len(test_dataset)):
+                if idx % 10 == 9 or idx + 1 == len(test_dataset):
+                    print(str(idx + 1) + ' / ' + str(len(test_dataset)))
 
-    dataset_results = []
-    imgIds = []
+                img, img_meta, _, _ = test_dataset[idx]
 
-    for idx in range(len(test_dataset)):
-        if idx % 10 == 9 or idx + 1 == len(test_dataset):
-            print(str(idx + 1) + ' / ' + str(len(test_dataset)))
+                proposals = model.simple_test_rpn(img, img_meta)
 
-        img, img_meta, _, _ = test_dataset[idx]
+                res = model.simple_test_bboxes(img, img_meta, proposals)
+                # visualize.display_instances(ori_img, res['rois'], res['class_ids'],
+                #                             test_dataset.get_categories(), scores=res['scores'])
 
-        proposals = model.simple_test_rpn(img, img_meta)
+                image_id = test_dataset.img_ids[idx]
+                imgIds.append(image_id)
 
-        res = model.simple_test_bboxes(img, img_meta, proposals)
-        # visualize.display_instances(ori_img, res['rois'], res['class_ids'],
-        #                             test_dataset.get_categories(), scores=res['scores'])
+                for pos in range(res['class_ids'].shape[0]):
+                    results = dict()
+                    results['score'] = float(res['scores'][pos])
+                    results['category_id'] = test_dataset.label2cat[int(res['class_ids'][pos])]
+                    y1, x1, y2, x2 = [int(num) for num in list(res['rois'][pos])]
+                    results['bbox'] = [x1, y1, x2 - x1 + 1, y2 - y1 + 1]
+                    results['image_id'] = image_id
+                    dataset_results.append(results)
 
-        image_id = test_dataset.img_ids[idx]
-        imgIds.append(image_id)
+            if not dataset_results == []:
+                with open('result/epoch_' + str(epoch) + '.json', 'w') as f:
+                    f.write(json.dumps(dataset_results))
 
-        for pos in range(res['class_ids'].shape[0]):
-            results = dict()
-            results['score'] = float(res['scores'][pos])
-            results['category_id'] = test_dataset.label2cat[int(res['class_ids'][pos])]
-            y1, x1, y2, x2 = [int(num) for num in list(res['rois'][pos])]
-            results['bbox'] = [x1, y1, x2 - x1 + 1, y2 - y1 + 1]
-            results['image_id'] = image_id
-            dataset_results.append(results)
+                coco_dt = test_dataset.coco.loadRes('result/epoch_' + str(epoch) + '.json')
+                cocoEval = COCOeval(test_dataset.coco, coco_dt, 'bbox')
+                cocoEval.params.imgIds = imgIds
 
-    if not dataset_results == []:
-        with open('result/epoch_' + str(epoch) + '.json', 'w') as f:
-            f.write(json.dumps(dataset_results))
+                cocoEval.evaluate()
+                cocoEval.accumulate()
+                cocoEval.summarize()
 
-        coco_dt = test_dataset.coco.loadRes('result/epoch_' + str(epoch) + '.json')
-        cocoEval = COCOeval(test_dataset.coco, coco_dt, 'bbox')
-        cocoEval.params.imgIds = imgIds
-
-        cocoEval.evaluate()
-        cocoEval.accumulate()
-        cocoEval.summarize()
+        if batch % checkpoint == 0:
+            model.save_weights('./model/epoch_' + str(epoch) + '.h5')
