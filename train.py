@@ -88,7 +88,7 @@ for epoch in range(1, epochs, 1):
         if batch % 10 == 0:
             print('Epoch:', epoch, 'Batch:', batch, 'Loss:', np.mean(loss_history))
         
-        if batch % 500 == 0:
+        if batch % 500 == 0 and not batch == 0:
             dataset_results = []
             imgIds = []
 
