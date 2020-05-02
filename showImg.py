@@ -22,4 +22,3 @@ rgb_img = np.round(img + img_mean)
 visualize.display_instances(rgb_img, bboxes, labels, train_dataset.get_categories())
 
 plt.savefig('img_demo.png')
-

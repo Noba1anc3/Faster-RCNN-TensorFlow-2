@@ -26,8 +26,9 @@ epochs = 100
 batch_size = 1
 flip_ratio = 0
 learning_rate = 1e-4
+checkpoint = 1
 
-opts, args = getopt.getopt(sys.argv[1:], "-b:-f:-l:", )
+opts, args = getopt.getopt(sys.argv[1:], "-b:-f:-l:-e:-c:", )
 
 for opt, arg in opts:
     if opt == '-b':
@@ -38,6 +39,8 @@ for opt, arg in opts:
         learning_rate = float(arg)
     elif opt == '-e':
         epochs = int(arg)
+    elif opt == '-c':
+        checkpoint = int(arg)
 
 train_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='train',
                                  flip_ratio=flip_ratio, pad_mode='fixed',
@@ -64,7 +67,8 @@ num_classes = len(train_dataset.get_categories())
 model = faster_rcnn.FasterRCNN(num_classes=num_classes)
 optimizer = keras.optimizers.SGD(learning_rate, momentum=0.9, nesterov=True)
 
-for epoch in range(epochs):
+for epoch in range(1, epochs, 1):
+
     loss_history = []
 
     for (batch, inputs) in enumerate(train_tf_dataset):
@@ -82,9 +86,10 @@ for epoch in range(epochs):
         loss_history.append(loss_value.numpy())
 
         if batch % 10 == 0:
-            print('Epoch:', epoch + 1, 'Batch:', batch, 'Loss:', np.mean(loss_history))
+            print('Epoch:', epoch, 'Batch:', batch, 'Loss:', np.mean(loss_history))
 
-    model.save_weights('./model/epoch_' + str(epoch+1) + '.h5')
+    if epoch % checkpoint == 0:
+        model.save_weights('./model/epoch_' + str(epoch) + '.h5')
 
     dataset_results = []
     imgIds = []
@@ -104,6 +109,7 @@ for epoch in range(epochs):
         image_id = test_dataset.img_ids[idx]
         imgIds.append(image_id)
 
+        print(res)
         for pos in range(res['class_ids'].shape[0]):
             results = dict()
             results['score'] = float(res['scores'][pos])
