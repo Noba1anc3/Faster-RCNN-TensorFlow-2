@@ -25,7 +25,7 @@ img_std = (1., 1., 1.)
 epochs = 100
 batch_size = 1
 flip_ratio = 0
-learning_rate = 2e-4
+learning_rate = 1e-4
 checkpoint = 1
 
 opts, args = getopt.getopt(sys.argv[1:], "-b:-f:-l:-e:-c:", )
@@ -91,8 +91,6 @@ for epoch in range(1, epochs, 1):
         img, img_meta, _, _ = test_dataset[idx]
 
         proposals = model.simple_test_rpn(img, img_meta)
-        print(proposals)
-        print(img_meta)
         res = model.simple_test_bboxes(img, img_meta, proposals)
         # visualize.display_instances(ori_img, res['rois'], res['class_ids'],
         #                             test_dataset.get_categories(), scores=res['scores'])
