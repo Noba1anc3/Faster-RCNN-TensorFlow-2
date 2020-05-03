@@ -103,7 +103,7 @@ for epoch in range(1, epochs, 1):
             results = dict()
             results['score'] = float(res['scores'][pos])
             results['category_id'] = test_dataset.label2cat[int(res['class_ids'][pos])]
-            y1, x1, y2, x2 = [int(num) for num in list(res['rois'][pos])]
+            y1, x1, y2, x2 = [float(num) for num in list(res['rois'][pos])]
             results['bbox'] = [x1, y1, x2 - x1 + 1, y2 - y1 + 1]
             results['image_id'] = image_id
             dataset_results.append(results)
