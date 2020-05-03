@@ -79,7 +79,7 @@ for epoch in range(1, epochs, 1):
         loss_history.append(loss_value.numpy())
 
         if batch % 10 == 0 or batch + 1 == len(train_dataset):
-            print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss_value)
+            print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss_value.numpy())
         
     dataset_results = []
     imgIds = []
