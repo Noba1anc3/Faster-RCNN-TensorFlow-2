@@ -6,9 +6,11 @@ import numpy as np
 import tensorflow as tf
 
 from tensorflow import keras
-from pycocotools.cocoeval import COCOeval
+
 from detection.datasets import coco, data_generator
 from detection.models.detectors import faster_rcnn
+
+from pycocotool.cocoeval import COCOeval
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
