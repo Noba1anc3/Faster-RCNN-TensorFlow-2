@@ -25,7 +25,7 @@ img_std = (1., 1., 1.)
 epochs = 100
 batch_size = 1
 flip_ratio = 0
-learning_rate = 5e-4
+learning_rate = 2e-4
 checkpoint = 1
 
 opts, args = getopt.getopt(sys.argv[1:], "-b:-f:-l:-e:-c:", )
