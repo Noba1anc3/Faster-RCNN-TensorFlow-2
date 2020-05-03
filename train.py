@@ -46,22 +46,15 @@ train_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='train',
                                  flip_ratio=flip_ratio, pad_mode='fixed',
                                  mean=img_mean, std=img_std,
                                  scale=(800, 1216))
+test_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='val',
+                                 flip_ratio=flip_ratio, pad_mode='fixed',
+                                 mean=img_mean, std=img_std,
+                                 scale=(800, 1216))
 
 train_generator = data_generator.DataGenerator(train_dataset)
 train_tf_dataset = tf.data.Dataset.from_generator(
     train_generator, (tf.float32, tf.float32, tf.float32, tf.int32))
 train_tf_dataset = train_tf_dataset.batch(batch_size).prefetch(100).shuffle(100)
-
-test_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='val',
-                                 flip_ratio=flip_ratio, pad_mode='non-fixed',
-                                 mean=img_mean, std=img_std,
-                                 scale=(800, 1216))
-
-test_generator = data_generator.DataGenerator(test_dataset)
-test_tf_dataset = tf.data.Dataset.from_generator(
-    test_generator, (tf.float32, tf.float32, tf.float32, tf.int32))
-test_tf_dataset = test_tf_dataset.batch(batch_size).prefetch(100).shuffle(100)
-
 
 num_classes = len(train_dataset.get_categories())
 model = faster_rcnn.FasterRCNN(num_classes=num_classes)
