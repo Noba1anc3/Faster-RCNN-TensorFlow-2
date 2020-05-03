@@ -77,8 +77,7 @@ for epoch in range(1, epochs, 1):
 
         if batch % 10 == 0 or batch + 1 == len(train_dataset):
             print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss_value.numpy())
-        if batch == 100:
-            break
+
     if epoch % checkpoint == 0:
         model.save_weights('./model/epoch_' + str(epoch) + '.h5')
     
@@ -93,7 +92,7 @@ for epoch in range(1, epochs, 1):
 
         proposals = model.simple_test_rpn(img, img_meta)
         res = model.simple_test_bboxes(img, img_meta, proposals)
-        print(res)
+
         # visualize.display_instances(ori_img, res['rois'], res['class_ids'],
         #                             test_dataset.get_categories(), scores=res['scores'])
 
