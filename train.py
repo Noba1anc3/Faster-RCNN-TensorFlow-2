@@ -62,9 +62,8 @@ optimizer = keras.optimizers.SGD(learning_rate, momentum=0.9, nesterov=True)
 
 for epoch in range(1, epochs, 1):
 
-    loss_history = []
-
     for (batch, inputs) in enumerate(train_tf_dataset):
+        
         batch_imgs, batch_metas, batch_bboxes, batch_labels = inputs
 
         with tf.GradientTape() as tape:
@@ -75,8 +74,6 @@ for epoch in range(1, epochs, 1):
 
         grads = tape.gradient(loss_value, model.trainable_variables)
         optimizer.apply_gradients(zip(grads, model.trainable_variables))
-
-        loss_history.append(loss_value.numpy())
 
         if batch % 10 == 0 or batch + 1 == len(train_dataset):
             print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss_value.numpy())
