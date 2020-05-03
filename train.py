@@ -98,7 +98,8 @@ for epoch in range(1, epochs, 1):
         img, img_meta, _, _ = test_dataset[idx]
 
         proposals = model.simple_test_rpn(img, img_meta)
-
+        print(proposals)
+        print(img_meta)
         res = model.simple_test_bboxes(img, img_meta, proposals)
         # visualize.display_instances(ori_img, res['rois'], res['class_ids'],
         #                             test_dataset.get_categories(), scores=res['scores'])
