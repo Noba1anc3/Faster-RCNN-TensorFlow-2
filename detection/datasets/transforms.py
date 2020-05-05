@@ -40,7 +40,7 @@ class ImageTransform(object):
 
 
 class BboxTransform(object):
-    """　Preprocess ground truth bboxes.
+    """　Preprocess ground truth boxes.
 
         1. rescale bboxes according to image size
         2. flip bboxes (if needed)

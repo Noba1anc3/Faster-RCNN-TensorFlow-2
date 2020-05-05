@@ -14,7 +14,6 @@ class CocoDataSet(object):
                  std=(1, 1, 1),
                  scale=(1024, 800),
                  debug=False):
-
         """Load a subset of the COCO dataset.
 
         Attributes
@@ -32,6 +31,16 @@ class CocoDataSet(object):
             raise AssertionError('subset must be "train" or "val".')
 
         self.coco = COCO("{}/{}/{}.json".format(dataset_dir, subset, subset))
+        self.image_dir = "{}/{}/images/".format(dataset_dir, subset, subset)
+
+        self.flip_ratio = flip_ratio
+
+        if pad_mode in ['fixed', 'non-fixed']:
+            self.pad_mode = pad_mode
+        elif subset == 'train':
+            self.pad_mode = 'fixed'
+        else:
+            self.pad_mode = 'non-fixed'
 
         # get the mapping from original category ids to labels
         self.cat_ids = self.coco.getCatIds()
@@ -48,17 +57,6 @@ class CocoDataSet(object):
 
         if debug:
             self.img_ids, self.img_infos = self.img_ids[:50], self.img_infos[:50]
-
-        self.image_dir = "{}/{}/{}".format(dataset_dir, subset, subset)
-
-        self.flip_ratio = flip_ratio
-
-        if pad_mode in ['fixed', 'non-fixed']:
-            self.pad_mode = pad_mode
-        elif subset == 'train':
-            self.pad_mode = 'fixed'
-        else:
-            self.pad_mode = 'non-fixed'
 
         self.img_transform = transforms.ImageTransform(scale, mean, std, pad_mode)
         self.bbox_transform = transforms.BboxTransform()
@@ -163,16 +161,14 @@ class CocoDataSet(object):
             　　　　image, bboxes, labels.
         """
 
-        img_info = self.img_infos[idx]
-        ann_info = self._load_ann_info(idx)
-
         # load the image.
+        img_info = self.img_infos[idx]
         img = cv2.imread(osp.join(self.image_dir, img_info['file_name']), cv2.IMREAD_COLOR)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
         ori_shape = img.shape
 
         # Load the annotation.
+        ann_info = self._load_ann_info(idx)
         ann = self._parse_ann_info(ann_info)
         bboxes = ann['bboxes']
         labels = ann['labels']

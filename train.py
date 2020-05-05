@@ -6,7 +6,7 @@ import numpy as np
 import tensorflow as tf
 
 from tensorflow import keras
-from pycocotools.cocoeval import COCOeval
+from pycocotool.cocoeval import COCOeval
 from detection.datasets import coco, data_generator
 from detection.models.detectors import faster_rcnn
 

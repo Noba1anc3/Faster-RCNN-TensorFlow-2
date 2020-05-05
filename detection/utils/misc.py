@@ -2,14 +2,13 @@ import tensorflow as tf
 
 
 def trim_zeros(boxes, name=None):
-    """
-    Often boxes are represented with matrices of shape [N, 4] and
+    """Often boxes are represented with matrices of shape [N, 4] and
     are padded with zeros. This removes zero boxes.
 
     Args
     ---
         boxes: [N, 4] matrix of boxes.
-        non_zeros: [N] a 1D boolean mask identifying the rows to keep
+        name: [N] a 1D boolean mask identifying the rows to keep
     """
 
     non_zeros = tf.cast(tf.reduce_sum(tf.abs(boxes), axis=1), tf.bool)
@@ -19,8 +18,7 @@ def trim_zeros(boxes, name=None):
 
 
 def parse_image_meta(meta):
-    """
-    Parses a tensor that contains image attributes to its components.
+    """Parses a tensor that contains image attributes to its components.
 
     Args
     ---
@@ -30,6 +28,7 @@ def parse_image_meta(meta):
     ---
         a dict of the parsed tensors.
     """
+
     meta = meta.numpy()
     ori_shape = meta[..., 0:3]
     img_shape = meta[..., 3:6]
@@ -84,4 +83,5 @@ def calc_pad_shapes(meta):
     ---
         nd.ndarray. [..., (height, width)]
     """
+
     return tf.cast(meta[..., 6:8], tf.int32).numpy()

@@ -187,9 +187,6 @@ class BBoxHead(tf.keras.Model):
             nms_keep.append(nms_keep_map(unique_pre_nms_class_ids[i]))
 
         if len(nms_keep) != 0:
-#             nnms_keep = []
-#             for item in nms_keep:
-#                 nnms_keep.append(item.numpy())
             nms_keep = tf.concat(nms_keep, axis=0)
         else:
             nms_keep = tf.zeros([0, ], tf.int64)
