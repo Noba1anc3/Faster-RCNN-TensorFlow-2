@@ -25,7 +25,7 @@ img_mean = (123.675, 116.28, 103.53)
 img_std = (1., 1., 1.)
 
 epochs = 100
-batch_size = 1
+batch_size = 2
 flip_ratio = 0
 learning_rate = 1e-4
 checkpoint = 1
