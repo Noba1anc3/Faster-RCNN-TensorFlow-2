@@ -28,7 +28,7 @@ epochs = 100
 batch_size = 2
 flip_ratio = 0
 learning_rate = 1e-4
-checkpoint = 1000
+checkpoint = 500
 
 opts, args = getopt.getopt(sys.argv[1:], "-b:-f:-l:-e:-c:", )
 
