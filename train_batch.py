@@ -44,7 +44,7 @@ for opt, arg in opts:
     elif opt == '-c':
         checkpoint = int(arg)
 
-train_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='val',
+train_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='train',
                                  flip_ratio=flip_ratio, pad_mode='fixed',
                                  mean=img_mean, std=img_std,
                                  scale=(800, 1216))
@@ -63,11 +63,11 @@ model = faster_rcnn.FasterRCNN(num_classes=num_classes)
 optimizer = keras.optimizers.SGD(learning_rate, momentum=0.9, nesterov=True)
 
 for epoch in range(1, epochs, 1):
-    print(1)
+
     for (batch, inputs) in enumerate(train_tf_dataset):
-        print(2)
+
         batch_imgs, batch_metas, batch_bboxes, batch_labels = inputs
-        print(3)
+
         with tf.GradientTape() as tape:
             rpn_class_loss, rpn_bbox_loss, rcnn_class_loss, rcnn_bbox_loss = \
                 model((batch_imgs, batch_metas, batch_bboxes, batch_labels))
@@ -80,7 +80,7 @@ for epoch in range(1, epochs, 1):
         if batch % 10 == 0 or batch + 1 == len(train_dataset):
             print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss_value.numpy())
 
-        if batch % checkpoint == 0:
+        if batch % checkpoint == 0 and not batch == 0:
             model.save_weights('./model/epoch_' + str(epoch) + 'batch_' + str(batch) + '.h5')
 
             dataset_results = []
