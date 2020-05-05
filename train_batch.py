@@ -52,7 +52,7 @@ train_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='train',
                                  mean=img_mean, std=img_std,
                                  scale=(800, 1216))
 test_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='val',
-                                flip_ratio=flip_ratio, pad_mode='fixed',
+                                flip_ratio=flip_ratio, pad_mode='non-fixed',
                                 mean=img_mean, std=img_std,
                                 scale=(800, 1216))
 
