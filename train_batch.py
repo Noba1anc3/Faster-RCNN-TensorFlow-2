@@ -20,9 +20,12 @@ assert tf.__version__.startswith('2.')
 tf.random.set_seed(22)
 np.random.seed(22)
 
-img_mean = (123.675, 116.28, 103.53)
+# img_mean = (123.675, 116.28, 103.53)
 # img_std = (58.395, 57.12, 57.375)
-img_std = (1., 1., 1.)
+# img_std = (1., 1., 1.)
+
+img_mean = (0.9684,0.9683,0.9683)
+img_std = (0.1502,0.1505,0.1505)
 
 epochs = 100
 batch_size = 2
@@ -56,7 +59,7 @@ test_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='val',
 train_generator = data_generator.DataGenerator(train_dataset)
 train_tf_dataset = tf.data.Dataset.from_generator(
     train_generator, (tf.float32, tf.float32, tf.float32, tf.int32))
-train_tf_dataset = train_tf_dataset.batch(batch_size).prefetch(100).shuffle(100)
+train_tf_dataset = train_tf_dataset.batch(batch_size).prefetch(100)#.shuffle(100)
 
 num_classes = len(train_dataset.get_categories())
 model = faster_rcnn.FasterRCNN(num_classes=num_classes)

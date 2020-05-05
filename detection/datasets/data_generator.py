@@ -9,7 +9,8 @@ class DataGenerator(object):
     def __call__(self):
         indices = np.arange(len(self.dataset))
         if self.shuffle:
-            np.random.shuffle(indices)
+            pass
+            #np.random.shuffle(indices)
 
         # bbox和label进行零填充，使得整个batch中的维度相同
         # 首先计算整个batch中每张图片最多拥有多少个bbox
@@ -19,6 +20,7 @@ class DataGenerator(object):
             _, _, bbox, _ = self.dataset[img_idx]
             num_bbox.append(bbox.shape[0])
         max_num_bbox = max(num_bbox)
+        print(str(max_num_bbox) + '~~~~~~~~~~~~~~~~~~~~~~~~')
 
         for img_idx in indices:
             img, img_meta, bbox, label = self.dataset[img_idx]
