@@ -44,7 +44,7 @@ for opt, arg in opts:
     elif opt == '-c':
         checkpoint = int(arg)
 
-train_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='val',
+train_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='train',
                                  flip_ratio=flip_ratio, pad_mode='fixed',
                                  mean=img_mean, std=img_std,
                                  scale=(800, 1216))
