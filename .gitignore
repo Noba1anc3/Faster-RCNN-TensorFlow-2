@@ -1,6 +1,4 @@
 .idea
 __pycache__
-dataset
 model
 *.pyc
-img_demo.png
