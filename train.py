@@ -6,9 +6,11 @@ import numpy as np
 import tensorflow as tf
 
 from tensorflow import keras
-from pycocotool.cocoeval import COCOeval
+
 from detection.datasets import coco, data_generator
 from detection.models.detectors import faster_rcnn
+
+from pycocotool.cocoeval import COCOeval
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -47,9 +49,9 @@ train_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='train',
                                  mean=img_mean, std=img_std,
                                  scale=(800, 1216))
 test_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='val',
-                                 flip_ratio=flip_ratio, pad_mode='fixed',
-                                 mean=img_mean, std=img_std,
-                                 scale=(800, 1216))
+                                flip_ratio=flip_ratio, pad_mode='fixed',
+                                mean=img_mean, std=img_std,
+                                scale=(800, 1216))
 
 train_generator = data_generator.DataGenerator(train_dataset)
 train_tf_dataset = tf.data.Dataset.from_generator(
@@ -63,7 +65,7 @@ optimizer = keras.optimizers.SGD(learning_rate, momentum=0.9, nesterov=True)
 for epoch in range(1, epochs, 1):
 
     for (batch, inputs) in enumerate(train_tf_dataset):
-        
+
         batch_imgs, batch_metas, batch_bboxes, batch_labels = inputs
 
         with tf.GradientTape() as tape:
@@ -80,7 +82,7 @@ for epoch in range(1, epochs, 1):
 
     if epoch % checkpoint == 0:
         model.save_weights('./model/epoch_' + str(epoch) + '.h5')
-    
+
     dataset_results = []
     imgIds = []
 
