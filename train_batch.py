@@ -52,22 +52,22 @@ test_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='val',
                                 flip_ratio=flip_ratio, pad_mode='fixed',
                                 mean=img_mean, std=img_std,
                                 scale=(800, 1216))
-
+print(1)
 train_generator = data_generator.DataGenerator(train_dataset)
 train_tf_dataset = tf.data.Dataset.from_generator(
     train_generator, (tf.float32, tf.float32, tf.float32, tf.int32))
 train_tf_dataset = train_tf_dataset.batch(batch_size).prefetch(100).shuffle(100)
-
+print(2)
 num_classes = len(train_dataset.get_categories())
 model = faster_rcnn.FasterRCNN(num_classes=num_classes)
 optimizer = keras.optimizers.SGD(learning_rate, momentum=0.9, nesterov=True)
-
+print(3)
 for epoch in range(1, epochs, 1):
 
     for (batch, inputs) in enumerate(train_tf_dataset):
 
         batch_imgs, batch_metas, batch_bboxes, batch_labels = inputs
-
+        print(4)
         with tf.GradientTape() as tape:
             rpn_class_loss, rpn_bbox_loss, rcnn_class_loss, rcnn_bbox_loss = \
                 model((batch_imgs, batch_metas, batch_bboxes, batch_labels))
