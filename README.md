@@ -3,7 +3,7 @@ Faster R-CNN Resnet-101-FPN model was implemented with tensorflow 2.0.
 
 # Requirements
 - python 3.*
-- tensorflow 2.* (tensorflow==2.0.0-alpha0)
+- tensorflow>=2.2.0rc3
 - scikit-image
 - Keras==2.3.1
 - cv2
@@ -11,7 +11,7 @@ Faster R-CNN Resnet-101-FPN model was implemented with tensorflow 2.0.
 # Training
 ## args
 ```
--b batch_size (default = 1)
+-b batch_size (default = 2)
 ```
 
 ```
@@ -26,9 +26,19 @@ Faster R-CNN Resnet-101-FPN model was implemented with tensorflow 2.0.
 -e epochs (default = 100)
 ```
 
+```
+-c checkpoint (default = 1 in train_epoch, default = 500 in train_batch)
+```
+
+```
+-n normalization (default = ImageNet's mean and std.)
+   n = 0: no normalization;
+   n = 1: Company Articles Dataset's mean and std.
+```
+
 ## Command
 ``` python
-python train.py -b batch_size -f flip_ratio -l learning_rate -e epochs
+python train_batch.py [commands]
 ```
 
 # Acknowledgement

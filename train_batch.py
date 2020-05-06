@@ -20,12 +20,8 @@ assert tf.__version__.startswith('2.')
 tf.random.set_seed(22)
 np.random.seed(22)
 
-# img_mean = (123.675, 116.28, 103.53)
-# img_std = (58.395, 57.12, 57.375)
-# img_std = (1., 1., 1.)
-
-img_mean = (0.9684,0.9683,0.9683)
-img_std = (0.1502,0.1505,0.1505)
+img_mean = (123.675, 116.28, 103.53)
+img_std = (58.395, 57.12, 57.375)
 
 epochs = 100
 batch_size = 2
@@ -33,7 +29,7 @@ flip_ratio = 0
 learning_rate = 1e-4
 checkpoint = 500
 
-opts, args = getopt.getopt(sys.argv[1:], "-b:-f:-l:-e:-c:", )
+opts, args = getopt.getopt(sys.argv[1:], "-b:-f:-l:-e:-c:-n:", )
 
 for opt, arg in opts:
     if opt == '-b':
@@ -46,6 +42,13 @@ for opt, arg in opts:
         epochs = int(arg)
     elif opt == '-c':
         checkpoint = int(arg)
+    elif opt == '-n':
+        if int(arg) == 0:
+            img_mean = (0., 0., 0.)
+            img_std = (1., 1., 1.)
+        elif int(arg) == 1:
+            img_mean = (0.9684, 0.9683, 0.9683)
+            img_std = (0.1502, 0.1505, 0.1505)
 
 train_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='train',
                                  flip_ratio=flip_ratio, pad_mode='fixed',
