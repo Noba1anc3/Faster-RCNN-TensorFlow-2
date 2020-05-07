@@ -58,6 +58,8 @@ with open("../1.md", 'r') as f:
 
     for index in range(len(ap)):
         item = ap[index]
+        # item = item.split("|")[0].replace(" ","")
+        # print(item)
         if index == 0:
             print('|   ' + str(500) + ' |' + item)
         elif index >= 19:
