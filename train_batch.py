@@ -13,13 +13,19 @@ from detection.models.detectors import faster_rcnn
 from pycocotool.cocoeval import COCOeval
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+# 1: all log info / 3: error log info only
+# display warning and error log info
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
 
 assert tf.__version__.startswith('2.')
 
 tf.random.set_seed(22)
 np.random.seed(22)
 
+# The mean and std values are decided by the pretrained models.
+# When you are finetuning with some pretrained model,
+# you need to follow the mean and std values used for pretraining.
 img_mean = (123.675, 116.28, 103.53)
 img_std = (58.395, 57.12, 57.375)
 
@@ -47,6 +53,7 @@ for opt, arg in opts:
             img_mean = (0., 0., 0.)
             img_std = (1., 1., 1.)
         elif int(arg) == 1:
+            # Company Articles Dataset
             img_mean = (0.9684, 0.9683, 0.9683)
             img_std = (0.1502, 0.1505, 0.1505)
 
@@ -55,7 +62,7 @@ train_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='train',
                                  mean=img_mean, std=img_std,
                                  scale=(800, 1216))
 test_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='val',
-                                flip_ratio=flip_ratio, pad_mode='un-fixed',
+                                flip_ratio=flip_ratio, pad_mode='non-fixed',
                                 mean=img_mean, std=img_std,
                                 scale=(800, 1216))
 
@@ -83,11 +90,15 @@ for epoch in range(1, epochs, 1):
         grads = tape.gradient(loss_value, model.trainable_variables)
         optimizer.apply_gradients(zip(grads, model.trainable_variables))
 
-        if batch % 10 == 0 or batch + 1 == len(train_dataset):
-            print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss_value.numpy())
+        if batch % 10 == 0 and not batch == 0:
+            print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss_value.numpy(),
+                  'RPN Class Loss:', rpn_class_loss.numpy(),
+                  'RPN Bbox Loss:', rpn_bbox_loss.numpy(),
+                  'RCNN Class Loss:', rcnn_class_loss.numpy(),
+                  'RCNN Bbox Loss:', rcnn_bbox_loss.numpy())
 
         if batch % checkpoint == 0 and not batch == 0:
-            model.save_weights('./model/epoch_' + str(epoch) + 'batch_' + str(batch) + '.h5')
+            model.save_weights('./model/epoch_' + str(epoch) + '_batch_' + str(batch) + '.h5')
 
             dataset_results = []
             imgIds = []
@@ -117,11 +128,11 @@ for epoch in range(1, epochs, 1):
                     dataset_results.append(results)
 
             if not dataset_results == []:
-                with open('result/epoch_' + str(epoch) + 'batch_' + str(batch) + '.json', 'w') as f:
+                with open('result/epoch_' + str(epoch) + '_batch_' + str(batch) + '.json', 'w') as f:
                     f.write(json.dumps(dataset_results))
 
                 coco_dt = test_dataset.coco.loadRes(
-                    'result/epoch_' + str(epoch) + 'batch_' + str(batch) + '.json')
+                    'result/epoch_' + str(epoch) + '_batch_' + str(batch) + '.json')
                 cocoEval = COCOeval(test_dataset.coco, coco_dt, 'bbox')
                 cocoEval.params.imgIds = imgIds
 

@@ -30,7 +30,7 @@ flip_ratio = 0
 learning_rate = 1e-4
 checkpoint = 1
 
-opts, args = getopt.getopt(sys.argv[1:], "-b:-f:-l:-e:-c:", )
+opts, args = getopt.getopt(sys.argv[1:], "-b:-f:-l:-e:-c:-n:", )
 
 for opt, arg in opts:
     if opt == '-b':
@@ -43,13 +43,21 @@ for opt, arg in opts:
         epochs = int(arg)
     elif opt == '-c':
         checkpoint = int(arg)
+    elif opt == '-n':
+        if int(arg) == 0:
+            img_mean = (0., 0., 0.)
+            img_std = (1., 1., 1.)
+        elif int(arg) == 1:
+            # Company Articles Dataset
+            img_mean = (0.9684, 0.9683, 0.9683)
+            img_std = (0.1502, 0.1505, 0.1505)
 
 train_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='train',
                                  flip_ratio=flip_ratio, pad_mode='fixed',
                                  mean=img_mean, std=img_std,
                                  scale=(800, 1216))
 test_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='val',
-                                flip_ratio=flip_ratio, pad_mode='fixed',
+                                flip_ratio=flip_ratio, pad_mode='non-fixed',
                                 mean=img_mean, std=img_std,
                                 scale=(800, 1216))
 
@@ -77,8 +85,12 @@ for epoch in range(1, epochs, 1):
         grads = tape.gradient(loss_value, model.trainable_variables)
         optimizer.apply_gradients(zip(grads, model.trainable_variables))
 
-        if batch % 10 == 0 or batch + 1 == len(train_dataset):
-            print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss_value.numpy())
+        if batch % 10 == 0 and not batch == 0:
+            print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss_value.numpy(),
+                  'RPN Class Loss:', rpn_class_loss.numpy(),
+                  'RPN Bbox Loss:', rpn_bbox_loss.numpy(),
+                  'RCNN Class Loss:', rcnn_class_loss.numpy(),
+                  'RCNN Bbox Loss:', rcnn_bbox_loss.numpy())
 
     if epoch % checkpoint == 0:
         model.save_weights('./model/epoch_' + str(epoch) + '.h5')

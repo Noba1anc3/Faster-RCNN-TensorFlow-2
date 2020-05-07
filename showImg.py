@@ -13,12 +13,12 @@ batch_size = 1
 flip_ratio = 0
 
 train_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='train',
-                                 flip_ratio=flip_ratio, pad_mode='fixed',
+                                 flip_ratio=flip_ratio, pad_mode='non-fixed',
                                  mean=img_mean, std=img_std,
                                  scale=(800, 1216))
 
 img, img_meta, bboxes, labels = train_dataset[0]
 rgb_img = np.round(img + img_mean)
-visualize.display_instances(rgb_img, bboxes, labels, train_dataset.get_categories())
+visualize.display_instances(img, bboxes, labels, train_dataset.get_categories())
 
 plt.savefig('img_demo.png')

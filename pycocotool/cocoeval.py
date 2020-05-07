@@ -420,11 +420,11 @@ class COCOeval:
         print('DONE (t={:0.2f}s).'.format( toc-tic))
 
     def summarize(self):
-        '''
+        """
         Compute and display summary metrics for evaluation results.
         Note this functin can *only* be applied on the default parameter setting
-        '''
-        def _summarize( ap=1, iouThr=None, areaRng='all', maxDets=100 ):
+        """
+        def _summarize( ap=1, iouThr=None, areaRng='all', maxDets=100):
             p = self.params
             iStr = ' {:<18} {} @[ IoU={:<9} | area={:>6s} | maxDets={:>3d} ] = {:0.3f}'
             titleStr = 'Average Precision' if ap == 1 else 'Average Recall'
@@ -455,6 +455,7 @@ class COCOeval:
                 mean_s = np.mean(s[s>-1])
             print(iStr.format(titleStr, typeStr, iouStr, areaRng, maxDets, mean_s))
             return mean_s
+
         def _summarizeDets():
             stats = np.zeros((12,))
             stats[0] = _summarize(1)

@@ -1,4 +1,6 @@
 .idea
 __pycache__
 model
+dataset/train
+dataset/val
 *.pyc
