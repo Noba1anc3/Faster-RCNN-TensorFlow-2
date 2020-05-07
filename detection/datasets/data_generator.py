@@ -21,14 +21,14 @@ class DataGenerator(object):
         #     num_bbox.append(bbox.shape[0])
         # max_num_bbox = max(num_bbox)
 
-        # max_num_bbox = 45
+        max_num_bbox = 45
 
         for img_idx in indices:
             img, img_meta, bbox, label = self.dataset[img_idx]
 
-            # 填充bbox和label
-#             num_to_fill = max_num_bbox - bbox.shape[0]  # 需要填充多少个bbox和label
-#             bbox = np.concatenate([bbox, np.zeros((num_to_fill, 4), dtype=int)], axis=0)
-#             label = np.concatenate([label, np.zeros((num_to_fill,), dtype=int)], axis=0)
+            填充bbox和label
+            num_to_fill = max_num_bbox - bbox.shape[0]  # 需要填充多少个bbox和label
+            bbox = np.concatenate([bbox, np.zeros((num_to_fill, 4), dtype=int)], axis=0)
+            label = np.concatenate([label, np.zeros((num_to_fill,), dtype=int)], axis=0)
 
             yield img, img_meta, bbox, label
