@@ -26,7 +26,7 @@ class DataGenerator(object):
         for img_idx in indices:
             img, img_meta, bbox, label = self.dataset[img_idx]
 
-            填充bbox和label
+            # 填充bbox和label
             num_to_fill = max_num_bbox - bbox.shape[0]  # 需要填充多少个bbox和label
             bbox = np.concatenate([bbox, np.zeros((num_to_fill, 4), dtype=int)], axis=0)
             label = np.concatenate([label, np.zeros((num_to_fill,), dtype=int)], axis=0)
