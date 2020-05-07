@@ -9,7 +9,8 @@ class DataGenerator(object):
     def __call__(self):
         indices = np.arange(len(self.dataset))
         if self.shuffle:
-            np.random.shuffle(indices)
+            pass
+            # np.random.shuffle(indices)
 
         # bbox和label进行零填充，使得整个batch中的维度相同
         # 首先计算整个batch中每张图片最多拥有多少个bbox
