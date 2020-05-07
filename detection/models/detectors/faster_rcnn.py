@@ -54,7 +54,7 @@ class FasterRCNN(tf.keras.Model, RPNTestMixin, BBoxTestMixin):
         self.RCNN_NEG_IOU_THR = 0.5
 
         # Boxes kept configuration
-        self.RCNN_MIN_CONFIDENCE = 0.7
+        self.RCNN_MIN_CONFIDENCE = 0.05
         self.RCNN_NMS_THRESHOLD = 0.3
         self.RCNN_MAX_INSTANCES = 100
 
