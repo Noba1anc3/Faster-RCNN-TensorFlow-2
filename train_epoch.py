@@ -29,6 +29,7 @@ batch_size = 2
 flip_ratio = 0
 learning_rate = 1e-4
 checkpoint = 1
+finetune = 0
 
 opts, args = getopt.getopt(sys.argv[1:], "-b:-f:-l:-e:-c:-n:", )
 
@@ -36,7 +37,7 @@ for opt, arg in opts:
     if opt == '-b':
         batch_size = int(arg)
     elif opt == '-f':
-        flip_ratio = float(arg)
+        finetune = int(arg)
     elif opt == '-l':
         learning_rate = float(arg)
     elif opt == '-e':
@@ -69,6 +70,9 @@ train_tf_dataset = train_tf_dataset.batch(batch_size).prefetch(100).shuffle(100)
 num_classes = len(train_dataset.get_categories())
 model = faster_rcnn.FasterRCNN(num_classes=num_classes)
 optimizer = keras.optimizers.SGD(learning_rate, momentum=0.9, nesterov=True)
+
+if finetune:
+    model.load_weights('model/faster_rcnn.h5')
 
 for epoch in range(1, epochs, 1):
 

@@ -33,7 +33,7 @@ batch_size = 2
 flip_ratio = 0
 learning_rate = 1e-4
 checkpoint = 500
-finetune = 1
+finetune = 0
 
 opts, args = getopt.getopt(sys.argv[1:], "-b:-f:-l:-e:-c:-n:", )
 
@@ -80,7 +80,7 @@ if finetune:
 
 for epoch in range(1, epochs, 1):
     for (batch, inputs) in enumerate(train_tf_dataset):
-        
+
         batch_imgs, batch_metas, batch_bboxes, batch_labels = inputs
 
         with tf.GradientTape() as tape:
