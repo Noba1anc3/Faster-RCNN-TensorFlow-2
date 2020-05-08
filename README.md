@@ -1,11 +1,10 @@
 # Faster RCNN
-Faster R-CNN Resnet-101-FPN model was implemented with tensorflow 2.0.
+Faster R-CNN Resnet-101-FPN implementation based on TensorFlow 2.0.
 
 # Requirements
 - python 3.*
 - tensorflow>=2.2.0rc3
 - scikit-image
-- Keras==2.3.1
 - cv2
 
 # Training
@@ -40,6 +39,11 @@ Faster R-CNN Resnet-101-FPN model was implemented with tensorflow 2.0.
 ``` python
 python train_batch.py [commands]
 ```
+
+# Wiki
+- [Visualized comparison between different normalization scheme](https://github.com/Noba1anc3/Faster-RCNN-TensorFlow-2/wiki/Comparison-between-different-normalization)
+- [Detailed Training and Testing Logs of Training Without Normalization](https://github.com/Noba1anc3/Faster-RCNN-TensorFlow-2/wiki/Detailed-Training-and-Testing-Logs-of-Training-Without-Normalization)
+- [Analysis on training result caused by different normalization scheme](https://github.com/Noba1anc3/Faster-RCNN-TensorFlow-2/wiki/Analysis-on-training-result-caused-by-different-normalization-scheme)
 
 # Acknowledgement
 This work builds on many excellent works, which include:
