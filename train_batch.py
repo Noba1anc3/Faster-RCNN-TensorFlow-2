@@ -73,15 +73,14 @@ train_tf_dataset = train_tf_dataset.batch(batch_size).prefetch(100)#.shuffle(100
 
 num_classes = len(train_dataset.get_categories())
 model = faster_rcnn.FasterRCNN(num_classes=num_classes)
-# optimizer = keras.optimizers.SGD(learning_rate, momentum=0.9, nesterov=True)
+optimizer = keras.optimizers.SGD(learning_rate, momentum=0.9, nesterov=True)
 
 if finetune:
     model.load_weights('model/faster_rcnn.h5')
 
 for epoch in range(1, epochs, 1):
-
     for (batch, inputs) in enumerate(train_tf_dataset):
-        print(batch)
+        
         batch_imgs, batch_metas, batch_bboxes, batch_labels = inputs
 
         with tf.GradientTape() as tape:
