@@ -14,7 +14,7 @@ Faster R-CNN Resnet-101-FPN implementation based on TensorFlow 2.0.
 ```
 
 ```
--f flip_ratio (default = 0)
+-f finetune (default = 0)
 ```
 
 ```
