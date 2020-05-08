@@ -24,7 +24,7 @@ def random_colors(N, bright=True):
 
 
 def display_instances(image, boxes, class_ids, class_names,
-                      scores=None, title="",
+                      scores=None, title="showImg",
                       figsize=(16, 16), ax=None):
     """
     boxes: [num_instance, (y1, x1, y2, x2, class_id)] in image coordinates.
@@ -78,7 +78,7 @@ def display_instances(image, boxes, class_ids, class_names,
                 color='b', size=11, backgroundcolor="none")
 
     plt.imshow(image.astype(np.uint8))
-
+    plt.show()
 
 def draw_boxes(image, boxes=None, refined_boxes=None,
                captions=None, visibilities=None,

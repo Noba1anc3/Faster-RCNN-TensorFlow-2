@@ -18,7 +18,7 @@ train_dataset = coco.CocoDataSet(dataset_dir='dataset', subset='train',
                                  scale=(800, 1216))
 
 img, img_meta, bboxes, labels = train_dataset[0]
-rgb_img = np.round(img + img_mean)
-visualize.display_instances(img, bboxes, labels, train_dataset.get_categories())
+rgb_img = np.round(img*img_std + img_mean)
+visualize.display_instances(rgb_img, bboxes, labels, train_dataset.get_categories())
 
-plt.savefig('img_demo.png')
+# plt.savefig('img_demo.png')
