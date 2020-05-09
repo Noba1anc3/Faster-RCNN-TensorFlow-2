@@ -45,7 +45,7 @@ python train_batch.py [commands]
 - [Detailed Training and Testing Logs of Training Without Normalization](https://github.com/Noba1anc3/Faster-RCNN-TensorFlow-2/wiki/Detailed-Training-and-Testing-Logs-of-Training-Without-Normalization)
 - [Analysis on training result caused by different normalization scheme I](https://github.com/Noba1anc3/Faster-RCNN-TensorFlow-2/wiki/Analysis-on-training-result-caused-by-different-normalization-scheme-I)
 - [Analysis on training result caused by different normalization scheme II ☆](https://github.com/Noba1anc3/Faster-RCNN-TensorFlow-2/wiki/%E2%98%86-Analysis-on-training-result-caused-by-different-normalization-scheme-II-%E2%98%86)
-
+- [Analysis on training result caused by different anchor ratios](https://github.com/Noba1anc3/Faster-RCNN-TensorFlow-2/wiki/Analysis-on-training-result-caused-by-different-anchor-ratios)
 # Experiment
 ## Comparison between without normalization and ImageNet Normalization
 ![](http://m.qpic.cn/psc?/fef49446-40e0-48c4-adcc-654c5015022c/U9VSE8DftkGCrX.UXUSpmxIT4b**SQhrHn6NAn98RVNPQvml82nEWGkQemceMb78Y2pOnzhC.ocBsHnTfSQm0YjwcvdKn.Bc*g4RzGizWbc!/b&bo=TALgAUwC4AEDGTw!&rf=viewer_4)
