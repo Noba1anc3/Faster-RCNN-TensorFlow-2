@@ -1,5 +1,5 @@
 def ap_ar_analysis():
-    with open("../../2.md", 'r') as f:
+    with open("../../136.mdown", 'r') as f:
         lines = f.readlines()
         i = 1
         newLine = ''
@@ -58,25 +58,26 @@ def ap_ar_analysis():
 
         for index in range(len(ap)):
             item = ap[index]
-            # item = item.split("|")[0].replace(" ","")
-            # print(item)
-            if index == 0:
-                print('|   ' + str(500) + ' |' + item)
-            elif index >= 19:
-                print('| ' + str((index + 1) * 500) + ' |' + item)
-            else:
-                print('|  ' + str((index + 1) * 500) + ' |' + item)
-
-        print('\n')
-
-        for index in range(len(ar)):
-            item = ar[index]
-            if index == 0:
-                print('|   ' + str(500) + ' |' + item)
-            elif index >= 19:
-                print('| ' + str((index + 1) * 500) + ' |' + item)
-            else:
-                print('|  ' + str((index + 1) * 500) + ' |' + item)
+            item = item.split("|")[0].replace(" ","")
+            #print(item)
+            print((index+1)*500)
+        #     if index == 0:
+        #         print('|   ' + str(500) + ' |' + item)
+        #     elif index >= 19:
+        #         print('| ' + str((index + 1) * 500) + ' |' + item)
+        #     else:
+        #         print('|  ' + str((index + 1) * 500) + ' |' + item)
+        #
+        # print('\n')
+        #
+        # for index in range(len(ar)):
+        #     item = ar[index]
+        #     if index == 0:
+        #         print('|   ' + str(500) + ' |' + item)
+        #     elif index >= 19:
+        #         print('| ' + str((index + 1) * 500) + ' |' + item)
+        #     else:
+        #         print('|  ' + str((index + 1) * 500) + ' |' + item)
 
 
 def loss_analysis():
@@ -113,6 +114,6 @@ def loss_analysis():
         #     print(rcnn_bbox[index])
 
 
-# ap_ar_analysis()
+ap_ar_analysis()
 
-loss_analysis()
+# loss_analysis()
