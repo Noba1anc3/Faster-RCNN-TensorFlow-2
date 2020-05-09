@@ -21,7 +21,7 @@ class FasterRCNN(tf.keras.Model, RPNTestMixin, BBoxTestMixin):
 
         # Anchor attributes
         self.ANCHOR_SCALES = (32, 64, 128, 256, 512)
-        self.ANCHOR_RATIOS = (1, 5, 10)
+        self.ANCHOR_RATIOS = (1., 5., 10.)
         self.ANCHOR_FEATURE_STRIDES = (4, 8, 16, 32, 64)
 
         # Bounding box refinement mean and standard deviation
