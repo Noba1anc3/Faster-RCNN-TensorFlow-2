@@ -1,5 +1,5 @@
 def ap_ar_analysis():
-    with open("../1.md", 'r') as f:
+    with open("../../2.md", 'r') as f:
         lines = f.readlines()
         i = 1
         newLine = ''
@@ -80,7 +80,7 @@ def ap_ar_analysis():
 
 
 def loss_analysis():
-    with open("../1.md", 'r') as f:
+    with open("../../all3.mdown", 'r') as f:
         lines = f.readlines()
 
         loss = []
@@ -91,7 +91,7 @@ def loss_analysis():
 
         for index in range(len(lines)):
             line = lines[index]
-            loss.append(line.split("Loss:")[1].split("RPN")[0])
+            loss.append(line.split("Loss:")[1].split("rpn")[0])
             rpn_cls.append(line.split("Class Loss:")[1].split("RPN")[0])
             rpn_bbox.append(line.split("Bbox Loss:")[1].split("RCNN")[0])
             rcnn_cls.append(line.split("RCNN Class Loss:")[1].split("RCNN")[0])
@@ -100,17 +100,19 @@ def loss_analysis():
         # for index in range(len(lines)):
         #     print(loss[index])
 
-        # for index in range(1019):
+        # for index in range(len(lines)):
         #     print(rpn_cls[index])
 
-        # for index in range(1019):
+        # for index in range(len(lines)):
         #     print(rpn_bbox[index])
 
-        # for index in range(1019):
+        # for index in range(len(lines)):
         #     print(rcnn_cls[index])
 
-        # for index in range(1019):
+        # for index in range(len(lines)):
         #     print(rcnn_bbox[index])
 
+
+# ap_ar_analysis()
 
 loss_analysis()

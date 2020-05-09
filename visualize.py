@@ -80,6 +80,7 @@ def display_instances(image, boxes, class_ids, class_names,
     plt.imshow(image.astype(np.uint8))
     plt.show()
 
+
 def draw_boxes(image, boxes=None, refined_boxes=None,
                captions=None, visibilities=None,
                title="", ax=None):

@@ -137,3 +137,7 @@ for epoch in range(1, epochs, 1):
         cocoEval.evaluate()
         cocoEval.accumulate()
         cocoEval.summarize()
+
+        with open('result/evaluation.txt', 'a+') as f:
+            content = 'Epoch: ' + str(epoch) + '\n' + str(cocoEval.stats) + '\n'
+            f.write(content)

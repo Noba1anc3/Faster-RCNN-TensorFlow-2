@@ -76,7 +76,7 @@ model = faster_rcnn.FasterRCNN(num_classes=num_classes)
 optimizer = keras.optimizers.SGD(learning_rate, momentum=0.9, nesterov=True)
 
 if finetune:
-    model.load_weights('model/faster_rcnn.h5')
+    model.load_weights('model/faster_rcnn.h5', by_name=True)
 
 for epoch in range(1, epochs, 1):
     for (batch, inputs) in enumerate(train_tf_dataset):
@@ -141,3 +141,8 @@ for epoch in range(1, epochs, 1):
                 cocoEval.evaluate()
                 cocoEval.accumulate()
                 cocoEval.summarize()
+
+                with open('result/evaluation.txt', 'a+') as f:
+                    content = 'Epoch: ' + str(epoch) + 'Batch: ' + str(batch) \
+                              + '\n' + str(cocoEval.stats) + '\n'
+                    f.write(content)
