@@ -41,6 +41,8 @@ python train_batch.py [commands]
 ```
 
 # Wiki
+- [对原有项目的调试纠错和改造添加记录
+](https://github.com/Noba1anc3/Faster-RCNN-TensorFlow-2/wiki/%E5%AF%B9%E5%8E%9F%E6%9C%89%E9%A1%B9%E7%9B%AE%E7%9A%84%E8%B0%83%E8%AF%95%E7%BA%A0%E9%94%99%E5%92%8C%E6%94%B9%E9%80%A0%E6%B7%BB%E5%8A%A0%E8%AE%B0%E5%BD%95)
 - [Visualized comparison between different normalization scheme](https://github.com/Noba1anc3/Faster-RCNN-TensorFlow-2/wiki/Comparison-between-different-normalization)
 - [Detailed Training and Testing Logs of Training Without Normalization](https://github.com/Noba1anc3/Faster-RCNN-TensorFlow-2/wiki/Detailed-Training-and-Testing-Logs-of-Training-Without-Normalization)
 - [Analysis on training result caused by different normalization scheme I](https://github.com/Noba1anc3/Faster-RCNN-TensorFlow-2/wiki/Analysis-on-training-result-caused-by-different-normalization-scheme-I)
